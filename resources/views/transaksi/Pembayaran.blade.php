@@ -78,23 +78,31 @@
                     <div class="space-y-4 text-gray-700">
                         <div class="flex justify-between border-b-2 pb-2">
                             <span>Nama Pemesan:</span>
-                            <span class="font-semibold">Rendy Riansyah</span>
+                            <span class="font-semibold">{{ $nama_pemesan }}</span>
+                        </div>
+                        <div class="flex justify-between border-b-2 pb-2">
+                            <span>Alamat:</span>
+                            <span class="font-semibold">{{ $alamat }}</span>
+                        </div>
+                        <div class="flex justify-between border-b-2 pb-2">
+                            <span>No Handphone:</span>
+                            <span class="font-semibold">{{ $no_handphone }}</span>
                         </div>
                         <div class="flex justify-between border-b-2 pb-2">
                             <span>Jumlah Tiket:</span>
-                            <span class="font-semibold">2 Tiket</span>
+                            <span class="font-semibold">{{ $jumlah_penumpang }}</span>
                         </div>
                         <div class="flex justify-between border-b-2 pb-2">
                             <span>Tanggal Keberangkatan:</span>
-                            <span class="font-semibold">30 August 2024</span>
+                            <span class="font-semibold">{{ \Carbon\Carbon::parse($ticket->tanggal)->format('d M Y') }} {{ $ticket->waktu }}</span>
                         </div>
                         <div class="flex justify-between border-b-2 pb-2">
                             <span>Metode Pembayaran:</span>
-                            <span class="font-semibold" id="selectedPaymentMethod">Belum dipilih</span>
+                            <span class="font-semibold" id="selectedPaymentMethod"></span>
                         </div>
                         <div class="flex justify-between border-b-2 pb-2">
                             <span>Total Pembayaran:</span>
-                            <span class="font-semibold">Rp 1.100.000</span>
+                            <span class="font-semibold">Rp {{ number_format($total_pembayaran, 0, ',', '.') }}</span>
                         </div>
                     </div>
 
@@ -115,55 +123,39 @@
                 <div class="space-y-3">
                     <div class="flex justify-between border-b pb-2">
                         <span class="font-semibold">Kelas Bus</span>
-                        <span class='text-sm'>Eksekutif</span>
+                        <span class='text-sm'>{{ $ticket->kelas }}</span>
                     </div>
                     <div class="flex justify-between border-b pb-2">
                         <span class="font-semibold">Kode Bus</span>
-                        <span class='text-sm'>B111</span>
+                        <span class='text-sm'>{{ $ticket->kode }}</span>
                     </div>
                     <div class="flex justify-between border-b pb-2">
                         <span class="font-semibold">Berangkat</span>
-                        <span class='text-sm'>Bandung</span>
-                    </div>
-                    <div class="flex justify-between border-b pb-2">
-                        <span class="font-semibold">Titik Naik</span>
-                        <span class='text-sm'>Terminal Cicaheum</span>
+                        <span class='text-sm'>{{ $ticket->dari }}</span>
                     </div>
                     <div class="flex justify-between border-b pb-2">
                         <span class="font-semibold">Tujuan</span>
-                        <span class='text-sm'>Bali</span>
+                        <span class='text-sm'>{{ $ticket->tujuan }}</span>
                     </div>
                     <div class="flex justify-between border-b pb-2">
-                        <span class="font-semibold">Titik Turun</span>
-                        <span class='text-sm'>Denpasar</span>
-                    </div>
-                    <div class="flex justify-between border-b pb-2">
-                        <span class="font-semibold">Tanggal</span>
-                        <span class='text-sm'>30 Agustus 2024</span>
-                    </div>
-                    <div class="flex justify-between border-b pb-2">
-                        <span class="font-semibold">Keberangkatan</span>
-                        <span class='text-sm'>1 Des 2024 07:30 AM</span>
-                    </div>
-                    <div class="flex justify-between border-b pb-2">
-                        <span class="font-semibold">Tiba di Tujuan</span>
-                        <span class='text-sm'>2 Des 2024 08:30 AM</span>
+                        <span class="font-semibold">Tanggal Keberangkatan</span>
+                        <span class='text-sm'>{{ \Carbon\Carbon::parse($ticket->tanggal)->format('d M Y') }} {{ $ticket->waktu }}</span>
                     </div>
                     <div class="flex justify-between border-b pb-2">
                         <span class="font-semibold">Jumlah Penumpang</span>
-                        <span class='text-sm'>2</span>
+                        <span class='text-sm'>{{ $jumlah_penumpang }}</span>
                     </div>
                     <div class="flex justify-between border-b pb-2">
-                        <span class="font-semibold">Nama Penumpang 1</span>
-                        <span class='text-sm'>Rendy Riansyah</span>
+                        <span class="font-semibold">Nama Penumpang</span>
+                        <span class='text-sm'>{{ $nama_penumpang }}</span>
                     </div>
                     <div class="flex justify-between border-b pb-2">
-                        <span class="font-semibold">Nama Penumpang 2</span>
-                        <span class='text-sm'>Rizky Riansyah</span>
+                        <span class="font-semibold">Nomor Kursi</span>
+                        <span class='text-sm'>{{ implode(', ', $selected_seats) }}</span>
                     </div>
                     <div class="flex justify-between border-b pb-2">
                         <span class="font-semibold">Pembayaran</span>
-                        <span class='text-sm'>Rp 1.100.000</span>
+                        <span class='text-sm'>Rp {{ number_format($total_pembayaran, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>
@@ -179,7 +171,7 @@
 
         function navigateToBiodataForm() {
             // Tambahkan logika untuk navigasi ke halaman Biodata Form
-            window.location.href = '/kursi-31'; // Ganti dengan URL yang sesuai
+            window.location.href = '/kursi'; // Ganti dengan URL yang sesuai
         }
 
         function handleNextClick() {

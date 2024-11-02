@@ -4,8 +4,19 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BusTicketController;
 
 Route::get('/', function () {
-    return view('components.Home');
+    return view('components.Home')->name('home');
 });
+
+// untuk halaman pilih-tiket
+Route::post('/search-bus-tickets', [BusTicketController::class, 'search'])->name('search.bus.tickets');
+
+Route::get('/isi-biodata/{kode?}', [BusTicketController::class, 'showBiodata'])->name('tickets.biodata');
+Route::post('/store-biodata', [BusTicketController::class, 'storeBiodata'])->name('store.biodata');
+
+Route::get('/select-seat', [BusTicketController::class, 'showKursi'])->name('show.kursi');
+Route::post('/store-seat', [BusTicketController::class, 'storeSeatSelection'])->name('store.seat');
+
+Route::get('/Pembayaran', [BusTicketController::class, 'showPembayaran'])->name('pembayaran');
 
 Route::get('/dashboard', function () {
     return view('admin.dashboard');
@@ -33,22 +44,6 @@ Route::get('/bus-code', function () {
 
 Route::get('/live-tracking', function () {
     return view('tracking.live-tracking');
-});
-
-Route::post('/search-bus-tickets', [BusTicketController::class, 'search'])->name('search.bus.tickets');
-
-// Route::get('/search-bus-tickets', [BusTicketController::class, 'searchGet'])->name('search.bus.tickets.get');
-
-Route::get('/isi-biodata', function () {
-    return view('reservasi.isi-biodata');
-});
-
-Route::get('/kursi-31', function () {
-    return view('reservasi.kursi-31');
-});
-
-Route::get('/Pembayaran', function () {
-    return view('transaksi.Pembayaran');
 });
 
 Route::get('/E-Wallet', function () {

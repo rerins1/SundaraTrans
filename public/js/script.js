@@ -1,4 +1,3 @@
-// console.log('Script loaded');
 document.addEventListener('DOMContentLoaded', function() {
     // Handle tab switching
     const tabBooking = document.getElementById('tab-booking');
@@ -28,8 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', handleSearchTicket);
     }
 
+    // Handle jumlah penumpang selection
+    const selectPenumpang = document.getElementById('jumlah_penumpang');
+    if (selectPenumpang) {
+        selectPenumpang.addEventListener('change', function() {
+            // Simpan jumlah penumpang ke localStorage
+            localStorage.setItem('jumlahPenumpang', this.value);
+        });
+    }
+
     function handleSearchTicket(event) {
-        // console.log('Form submitted');
         event.preventDefault();  // Prevent form submission
 
         const dari = document.getElementById('dari');
@@ -100,6 +107,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;  // Stop form submission if validation fails
         }
 
+        // Save jumlah penumpang before form submission
+        localStorage.setItem('jumlahPenumpang', jumlah.value);
+
         // If all validations pass, allow form submission
         form.submit();
     }
@@ -110,4 +120,28 @@ document.addEventListener('DOMContentLoaded', function() {
         const today = new Date().toISOString().split('T')[0];
         dateInput.setAttribute('min', today);
     }
+
+    item.addEventListener('click', function(e) {
+        // Mencegah default onclick
+        e.preventDefault();
+        
+        // Mengambil data tiket
+        const ticketData = {
+            kelas: this.querySelector('.font-semibold').innerText, // untuk mobile
+            kode: this.querySelector('.text-gray-600 span').innerText,
+            waktu: this.querySelector('.text-gray-600 span:last-child').innerText,
+            dari: this.querySelector('.font-medium').innerText,
+            tujuan: this.querySelector('.font-medium:last-child').innerText,
+            harga: this.querySelector('.text-blue-600').innerText,
+            kursi: this.querySelector('.text-green-600').innerText.split(' ')[1],
+            tanggal: '{{ date("Y-m-d") }}' // sesuaikan dengan data tanggal Anda
+        };
+        
+        // Simpan ke localStorage
+        localStorage.setItem('ticketData', JSON.stringify(ticketData));
+        
+        // Redirect ke halaman biodata
+        window.location.href = this.getAttribute('onclick').replace("window.location.href='", '').replace("')", '');
+    });
+
 });
