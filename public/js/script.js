@@ -114,11 +114,29 @@ document.addEventListener('DOMContentLoaded', function() {
         form.submit();
     }
 
-    // Set minimum date for date input
+    // Set minimum date for date input with additional validation
     const dateInput = document.getElementById('tanggal');
     if (dateInput) {
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.setAttribute('min', today);
+        const today = new Date();
+        const formattedToday = today.toISOString().split('T')[0];
+        dateInput.setAttribute('min', formattedToday);
+        dateInput.value = formattedToday;
+
+        // Prevent user from selecting a past date
+        dateInput.addEventListener('change', function(e) {
+            const selectedDate = new Date(this.value);
+            selectedDate.setHours(0, 0, 0, 0);
+
+            if (selectedDate < today) {
+                alert('Tidak dapat memilih tanggal yang sudah lewat.');
+                this.value = formattedToday;
+            }
+        });
+
+        // Prevent typing in date input
+        dateInput.addEventListener('keydown', function(e) {
+            e.preventDefault();
+        });
     }
 
     item.addEventListener('click', function(e) {
@@ -143,5 +161,4 @@ document.addEventListener('DOMContentLoaded', function() {
         // Redirect ke halaman biodata
         window.location.href = this.getAttribute('onclick').replace("window.location.href='", '').replace("')", '');
     });
-
 });

@@ -159,6 +159,14 @@
     <x-footer></x-footer>
 
 
-<script src="{{ asset('js/script.js') }}"></script>
+    <script src="{{ asset('js/script.js') }}"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tanggalInput = document.getElementById('tanggal');
+        const today = new Date().toISOString().split('T')[0];
+        tanggalInput.setAttribute('min', today);
+    });
+    </script>
+
 </body>
 </html>

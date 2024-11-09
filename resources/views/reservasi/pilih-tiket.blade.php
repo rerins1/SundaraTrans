@@ -77,13 +77,13 @@
             
             <!-- Kotak Ubah Keberangkatan -->
             <div class="w-full lg:w-1/3 mt-6 lg:mt-0 lg:ml-6">
-                <form class="space-y-2 sm:space-y-3 md:space-y-4" id="form-booking" action="{{ route('search.bus.tickets') }}" method="POST">
+                <form class="space-y-4 md:space-y-6 lg:space-y-8 px-4 sm:px-6 md:px-8 lg:px-10" id="form-booking" action="{{ route('search.bus.tickets') }}" method="POST">
                     @csrf
-                    <h3 class="text-xl font-bold mb-4 pt-8 text-center">UBAH KEBERANGKATAN</h3>
-                    <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-bold mb-4 pt-8 text-center lg:text-left">UBAH KEBERANGKATAN</h3>
+                    <div class="bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-lg">
                         <div class="mb-4">
                             <label for="dari" class="block text-sm font-medium mb-2">Keberangkatan</label>
-                            <select id="dari" name="dari" class="w-full p-2 border rounded-lg">
+                            <select id="dari" name="dari" class="w-full p-2 md:p-3 border rounded-lg text-sm md:text-base">
                                 <optgroup label="PILIH ASAL KOTA">
                                     <option value="" selected>Silahkan Pilih Kota Asal</option>
                                     <option value="Bandung">Bandung</option>
@@ -96,7 +96,7 @@
                         </div>
                         <div class="mb-4">
                             <label for="tujuan" class="block text-sm font-medium mb-2">Tujuan</label>
-                            <select id="tujuan" name="tujuan" class="w-full p-2 border rounded-lg">
+                            <select id="tujuan" name="tujuan" class="w-full p-2 md:p-3 border rounded-lg text-sm md:text-base">
                                 <optgroup label="PILIH TUJUAN KOTA">
                                     <option value="" selected>Silahkan Pilih Kota Tujuan</option>
                                     <option value="Bandung">Bandung</option>
@@ -109,11 +109,11 @@
                         </div>
                         <div class="mb-4">
                             <label for="tanggal" class="block text-sm font-medium mb-2">Tanggal Keberangkatan</label>
-                            <input type="date" id="tanggal" name="tanggal" class="w-full p-2 border rounded-lg" />
+                            <input type="date" id="tanggal" name="tanggal" class="w-full p-2 md:p-3 border rounded-lg text-sm md:text-base" />
                         </div>
                         <div class="mb-4">
                             <label for="jumlah_penumpang" class="block text-sm font-medium mb-2">Jumlah Penumpang</label>
-                            <select id="jumlah_penumpang" name="jumlah_penumpang" class="w-full p-2 border rounded-lg">
+                            <select id="jumlah_penumpang" name="jumlah_penumpang" class="w-full p-2 md:p-3 border rounded-lg text-sm md:text-base">
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -125,13 +125,13 @@
                         <div id="error" class="hidden text-red-500"></div>
                         <button 
                             type="submit"
-                            class="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 focus:outline-none"
+                            class="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 focus:outline-none md:px-6 md:py-3 lg:px-8 lg:py-4"
                         >
                             CARI TIKET
                         </button>
                     </div>
                 </form>
-            </div>            
+            </div>          
         </div>
     </div>
 

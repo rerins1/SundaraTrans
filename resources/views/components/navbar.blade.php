@@ -95,34 +95,37 @@
     </div>
 
     <!-- Modal for Login -->
-    <div id="loginModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded shadow-lg max-w-md w-full">
-            <h2 class="text-lg font-semibold mb-4">Login</h2>
-            <form class="max-w-sm mx-auto space-y-5">
-                <div>
-                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                    <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@flowbite.com" required />
-                </div>
-                <div>
-                    <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                    <input type="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
-                </div>
-                <div class="flex items-start">
-                    <div class="flex items-center h-5">
-                        <input id="remember" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required />
+    <form method="POST" action="{{ route('admin.login') }}">
+        @csrf
+        <div id="loginModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+            <div class="bg-white p-6 rounded shadow-lg max-w-md w-full">
+                <h2 class="text-lg font-semibold mb-4">Login</h2>
+                <form class="max-w-sm mx-auto space-y-5">
+                    <div>
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                        <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@flowbite.com" required />
                     </div>
-                    <label for="remember" class="pl-2 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+                    <div>
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                        <input type="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input id="remember" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required />
+                        </div>
+                        <label for="remember" class="pl-2 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+                    </div>
+                    <div class="flex justify-center"> <!-- Tambahkan flex justify-center untuk memusatkan tombol -->
+                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
+                    </div>
+                </form>
+                <div class="mt-4 text-center border-t pt-4"> <!-- Tambahkan padding atas pada border-top -->
+                    <p class="text-sm text-gray-600">Belum terdaftar? <a href="#" onclick="openRegisterModal()" class="text-blue-600 hover:underline">Registrasi</a></p>
+                    <p class="text-sm text-gray-600">Lupa Password? <a href="#" class="text-blue-600 hover:underline">Reset Password</a></p>
                 </div>
-                <div class="flex justify-center"> <!-- Tambahkan flex justify-center untuk memusatkan tombol -->
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
-                </div>
-            </form>
-            <div class="mt-4 text-center border-t pt-4"> <!-- Tambahkan padding atas pada border-top -->
-                <p class="text-sm text-gray-600">Belum terdaftar? <a href="#" class="text-blue-600 hover:underline">Registrasi</a></p>
-                <p class="text-sm text-gray-600">Lupa Password? <a href="#" class="text-blue-600 hover:underline">Reset Password</a></p>
             </div>
         </div>
-    </div>
+    </form>
 
     <!-- Modal for Register -->
     <div id="registerModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
@@ -158,3 +161,25 @@
 
 <!-- Tambahkan Flowbite JS -->
 <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+<script>
+    function openLoginModal() {
+        document.getElementById('loginModal').classList.remove('hidden');
+        document.getElementById('registerModal').classList.add('hidden');
+    }
+
+    function openRegisterModal() {
+        document.getElementById('registerModal').classList.remove('hidden');
+        document.getElementById('loginModal').classList.add('hidden');
+    }
+
+    // Optional: close modal by clicking outside of it
+    window.onclick = function(event) {
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        if (event.target == loginModal) {
+            loginModal.classList.add('hidden');
+        } else if (event.target == registerModal) {
+            registerModal.classList.add('hidden');
+        }
+    };
+</script>

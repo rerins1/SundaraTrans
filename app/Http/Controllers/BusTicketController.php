@@ -96,21 +96,32 @@ class BusTicketController extends Controller
             'email' => 'required|email',
             'no_handphone' => 'required|string',
             'alamat' => 'required|string',
-            'nama_penumpang' => 'required|string',
+            'nama_penumpang' => 'required|array', // Ubah menjadi array
+            'nama_penumpang.*' => 'required|string', // Validasi setiap elemen array
         ]);
 
+        // Mengambil dan memproses array nama penumpang
+        $namaPenumpang = $request->input('nama_penumpang');
+        
         // Simpan data biodata ke session
         session([
             'nama_pemesan' => $request->input('nama_pemesan'),
             'email' => $request->input('email'),
             'no_handphone' => $request->input('no_handphone'),
             'alamat' => $request->input('alamat'),
-            'nama_penumpang' => $request->input('nama_penumpang'),
+            'nama_penumpang' => $namaPenumpang, // Simpan array nama penumpang
         ]);
 
-        dd(session()->all());
+        // Log semua data termasuk array nama penumpang
+        Log::info('Data biodata yang disimpan ke session:', [
+            'nama_pemesan' => $request->input('nama_pemesan'),
+            'email' => $request->input('email'),
+            'no_handphone' => $request->input('no_handphone'),
+            'alamat' => $request->input('alamat'),
+            'nama_penumpang' => $namaPenumpang,
+        ]);
 
-        return redirect()->route('show.pembayaran'); // Pastikan route ini benar
+        return redirect()->route('show.kursi');
     }
 
     public function showKursi()
@@ -133,8 +144,6 @@ class BusTicketController extends Controller
                 'jumlah_penumpang' => $jumlah_penumpang,
                 'bookedSeats' => $bookedSeats
             ]);
-
-            dd(session()->all());
 
         } catch (\Exception $e) {
             Log::error('Error in showKursi: ' . $e->getMessage());
@@ -165,7 +174,7 @@ class BusTicketController extends Controller
             session(['selected_seats' => $request->nomor_kursi]);
 
             // Ganti redirect ke route pembayaran yang menerima GET
-            return redirect()->route('pembayaran')
+            return redirect()->route('show.pembayaran')
                 ->with('success', 'Kursi berhasil dipilih');
 
         } catch (\Exception $e) {
@@ -182,13 +191,12 @@ class BusTicketController extends Controller
         $email = session('email');
         $no_handphone = session('no_handphone');
         $alamat = session('alamat');
-        $nama_penumpang = session('nama_penumpang');
+        $nama_penumpang = session('nama_penumpang', []); // Tambahkan default empty array
         $selected_seats = session('selected_seats', []);
         
         $ticket = Ticket::where('kode', session('kode_tiket'))->firstOrFail();
         $jumlah_penumpang = session('jumlah_penumpang', 1);
         $total_pembayaran = $ticket->harga * $jumlah_penumpang;
-
 
         return view('transaksi.Pembayaran', compact(
             'nama_pemesan', 'email', 'no_handphone', 'alamat', 

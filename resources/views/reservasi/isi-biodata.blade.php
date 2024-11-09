@@ -43,10 +43,10 @@
                             </div>
                             <div class="col-span-2">
                                 <label class="inline-flex items-center">
-                                    <input type="checkbox" class="form-checkbox" checked />
+                                    <input type="checkbox" name="is_pemesan_penumpang" class="form-checkbox" />
                                     <span class="ml-2">Penumpang Adalah Pemesan</span>
                                 </label>
-                            </div>
+                            </div>                            
                         </div>
                     </div>
 
@@ -75,7 +75,7 @@
                                 <span>{{ \Carbon\Carbon::parse($ticket->tanggal)->format('d M Y') }} {{ $ticket->waktu }}</span>
                             </div>
                             <div class="flex justify-between border-b">
-                                <span class="font-semibold">Penumpang</span>
+                                <span class="font-semibold">Jumlah Penumpang</span>
                                 <span>{{ $jumlah_penumpang }}</span>
                             </div>
                             <div class="flex justify-between">
@@ -96,7 +96,6 @@
                     </button>
                     <button 
                         type="submit"
-                        id="nextButton"
                         class="bg-red-500 text-white px-4 py-2 rounded-lg w-full md:w-auto"
                     >
                         SELANJUTNYA 
@@ -111,28 +110,6 @@
 
 
     <script src="{{ asset('js/biodata.js') }}"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Tombol "SELANJUTNYA"
-        const nextButton = document.querySelector('button.bg-red-500');
-
-        if (nextButton) {
-            nextButton.addEventListener('click', function(event) {
-                event.preventDefault();  // Tambahkan ini untuk mencegah submit form
-
-                // Ambil data jumlah penumpang dari elemen yang sesuai (sesuaikan dengan ID input jumlah penumpang)
-                const jumlahPenumpang = {{ $jumlah_penumpang }};  // Ini akan mengambil nilai jumlah_penumpang dari server
-
-                // Simpan jumlah penumpang di localStorage
-                localStorage.setItem('jumlah_penumpang', jumlahPenumpang);
-
-                // Arahkan user ke halaman /kursi
-                window.location.href = '/select-seat';
-            });
-        }
-    });
-    
-    </script>
     
 </body>
 </html>

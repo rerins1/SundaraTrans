@@ -29,8 +29,8 @@
                 <h2 class="text-lg font-semibold text-gray-700">Booking Information</h2>
                 <div class="mt-2">
                     <p><strong>Booking ID:</strong> SDTN7627374</p>
-                    <p><strong>Nama:</strong> Rendy Riansyah</p>
-                    <p><strong>Telepon:</strong> +628123456789</p>
+                    <p><strong>Nama:</strong></p>
+                    <p><strong>Telepon:</strong></p>
                     <p><strong>Email:</strong> rendyriansyah@example.com</p>
                     <p><strong>Tanggal Pesan:</strong> 10-10-2024, 13:00</p>
                 </div>
@@ -67,7 +67,7 @@
             <h2 class="text-lg font-semibold text-gray-700">Informasi Penumpang</h2>
             <div class="grid grid-cols-3 gap-4 mt-2">
                 <div>
-                    <p><strong>Nama Penumpang 1:</strong> John Doe</p>
+                    <p><strong>Nama Penumpang:</strong> John Doe</p>
                 </div>
                 <div>
                     <p><strong>Nomor Kursi:</strong> 25</p>

@@ -81,40 +81,119 @@
         };
 
         const bankInstructions = {
-    BCA: {
-        ATM: [
-            'Masukkan kartu ATM dan PIN.',
-            'Pilih Menu Transaksi Lainnya.',
-            'Pilih Transfer.',
-            'Pilih Ke rekening BCA Virtual Account.'
-        ],
-        Mobile: [
-            'Buka aplikasi BCA Mobile.',
-            'Pilih Menu Transfer > BCA Virtual Account.'
-        ],
-        Internet: [
-            'Login Internet Banking.',
-            'Pilih Transfer Dana.'
-        ]
-    },
-    BRI: {
-        ATM: [
-            'Masukkan kartu ATM dan PIN.',
-            'Pilih Menu Transaksi Lainnya.',
-            'Pilih Transfer.',
-            'Pilih Ke rekening BRI Virtual Account.'
-        ],
-        Mobile: [
-            'Buka aplikasi BRI Mobile.',
-            'Pilih Menu Transfer > BRI Virtual Account.'
-        ],
-        Internet: [
-            'Login Internet Banking BRI.',
-            'Pilih Transfer Dana.'
-        ]
-    },
-    // Tambahkan instruksi untuk bank lainnya...
-};
+            BCA: {
+                ATM: [
+                'Masukkan kartu ATM dan PIN.',
+                'Pilih Menu Transaksi Lainnya.',
+                'Pilih Transfer.',
+                'Pilih Ke rekening BCA Virtual Account.',
+                'Input Nomor Virtual Account, misal. 123456789012XXXX.',
+                'Pilih Benar.',
+                'Pilih Ya.',
+                'Ambil bukti bayar anda.'
+                ],
+                Mobile: [
+                    'Buka aplikasi BCA Mobile.',
+                    'Pilih Menu Transfer > BCA Virtual Account.',
+                    'Masukan Nomor Virtual Account, contoh: 123XXXXXX dan pilih Send.',
+                    'Periksa informasi yang tertera di layar. Pastikan informasi dan total tagihan sudah benar. Jika benar pilih Ya.',
+                    'Masukkan PIN m-BCA Anda dan pilih OK.',
+                    'Ambil bukti bayar anda.'
+                ],
+                Internet: [
+                    'Login Internet Banking.',
+                    'Pilih Transfer Dana.',
+                    'Pilih Transfer Ke BCA Virtual Account.',
+                    'Input Nomor Virtual Account, misal. 123456789012XXXX.',
+                    'Klik Lanjutkan.',
+                    'Input Respon KeyBCA Appli 1',
+                    'Klik Kirim.',
+                    'Bukti bayar ditampilkan.'
+                ]
+            },
+            
+            BRI: {
+                ATM: [
+                    'Pilih Menu Transaksi Lain.',
+                    'Pilih Menu Pembayaran.',
+                    'Pilih Menu Lain-lain.',
+                    'Pilih Menu BRIVA.',
+                    'Pilih Ke rekening BRI Virtual Account, misal. 98765432109XXXXX.',
+                    'Masukkan Nomor Virtual Account.',
+                    'Pilih Ya.',
+                    'Ambil bukti bayar anda.'
+                ],
+                Mobile: [
+                    'Login BRI Mobile.',
+                    'Pilih Mobile Banking BRI.',
+                    'Pilih Menu Pembayaran.',
+                    'Pilih Menu BRIVA.',
+                    'Masukkan Nomor Virtual Account, misal. 98765XXXXXXXXX.',
+                    'Masukkan Nominal.',
+                    'Klik OK.',
+                    'Masukkan PIN Mobile.',
+                    'Klik Kirim.',
+                    'Bukti bayar akan dikirim melalui sms.'
+                ],
+                Internet: [
+                    'Login Internet Banking.',
+                    'Pilih Pembayaran.',
+                    'Pilih Menu BRIVA.',
+                    'Masukkan Nomor Virtual Account, misal. 98765XXXXXXXXX.',
+                    'Klik Kirim.',
+                    'Masukkan Password.',
+                    'Masukkan mToken.',
+                    'Klik Kirim.',
+                    'Bukti bayar ditampilkan.'
+                ]
+            },
+    
+            BNI: {
+                ATM: [
+                    'Pilih Menu Lain.',
+                    'Pilih Menu Transfer.',
+                    'Pilih Ke Rekening BNI.',
+                    'Masukan Nominal, Misal 100000.',
+                    'masukkan Nomor Virtual Account, misal. 54321XXXXXXXXXX.',
+                    'Pilih Ya.',
+                    'Ambil bukti bayar anda.'
+                ],
+                Mobile: [
+                    'Login BNI Mobile.',
+                    'Pilih Mobile Banking BNI.',
+                    'Input Rekening Tujuan.',
+                    'Input Input Rekening Baru.',
+                    'Input Nomor Virtual Account sebagai Nomor Rekening, misal. 54321XXXXXXXXXX.',
+                    'Klik Lanjut.',
+                    'Masukkan Nominal Tagihan. , misal. 10000.',
+                    'Klik Lanjut.',
+                    'Periksa Detail Konfirmasi. Pastikan Data Sudah Benar.',
+                    'Jika Sudah Benar, Masukkan Password Transaksi.',
+                    'Klik Lanjut.',
+                    'Bukti bayar ditampilkan.'
+                ],
+                Internet: [
+                    'Login Internet Banking.',
+                    'Pilih Transaksi',
+                    'Pilih Info dan Administrasi',
+                    'Pilih Atur Rekening Tujuan',
+                    'Pilih Tambah Rekening Tujuan',
+                    'Masukkan Kode Booking sebagai Nama Singkat, misal. SDTN5795065',
+                    'Masukkan Nomor Virtual Account Sebagai Nomor Rekening, misal. 54321XXXXXXXXXX',
+                    'Lengkapi Semua Data Yang Diperlukan',
+                    'Klik Lanjutkan',
+                    'Masukkan Kode Otentikasi Token lalu, Proses',
+                    'Rekening Tujuan Berhasil Ditambahkan',
+                    'Pilih Menu Transfer',
+                    'Pilih Transfer Antar Rek. BNI',
+                    'Pilih Rekening Tujuan dengan Nama Singkat Yang Sudah Anda Tambahkan., misal. SDTN5795065',
+                    'Masukkan Nominal., misal. 10000',
+                    'Masukkan Kode Otentikasi Token',
+                    'Bukti bayar ditampilkan'
+                ]
+            },
+            // Tambahkan instruksi untuk bank lainnya...
+        };
 
 
         let timeLeft = 3600; // 1 jam dalam detik
@@ -173,7 +252,8 @@
         // Event listener untuk tombol selesai
         document.getElementById('finishButton').onclick = () => {
             alert("Pembayaran selesai. Terima kasih!");
-            // Navigasi ke halaman detail tiket jika perlu
+            // Navigasi ke halaman /Tiket
+            window.location.href = "/Tiket";
         };
 
         // Inisialisasi instruksi dan kode pembayaran saat halaman dimuat

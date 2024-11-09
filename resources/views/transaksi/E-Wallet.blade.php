@@ -69,34 +69,41 @@
 
         const ewalletInstructions = {
             Dana: [
-                'Buka aplikasi Dana.',
-                'Pilih menu Kirim > Kirim ke Bank.',
-                'Masukkan kode pembayaran sebagai nomor rekening.',
-                'Masukkan jumlah sesuai tagihan.'
+                'Buka aplikasi DANA dan masuk ke akun Anda.',
+                'Pilih opsi "Pembayaran" atau "Transfer Virtual Account".',
+                'Masukkan nomor Virtual Account yang diperoleh dari reservasi tiket bus.',
+                'Periksa dan konfirmasi detail pembayaran Anda.',
+                'Simpan bukti pembayaran setelah transaksi berhasil.'
             ],
+
             OVO: [
-                'Buka aplikasi OVO.',
-                'Pilih menu Transfer > Ke Rekening Bank.',
-                'Masukkan kode pembayaran sebagai nomor rekening.',
-                'Masukkan jumlah sesuai tagihan.'
+            'Buka aplikasi OVO di smartphone Anda.',
+            'Pilih menu "Pembayaran".',
+            'Masukkan kode atau nomor Virtual Account yang diberikan setelah pemesanan tiket bus.',
+            'Konfirmasi detail pembayaran yang tertera dan lanjutkan transaksi.',
+            'Simpan bukti pembayaran yang muncul sebagai konfirmasi pembayaran tiket bus.'
             ],
-            Gopay: [
-                'Buka aplikasi Gopay.',
-                'Pilih menu Bayar > Bayar ke Bank.',
-                'Masukkan kode pembayaran sebagai nomor rekening.',
-                'Masukkan jumlah sesuai tagihan.'
-            ],
+
             LinkAja: [
-                'Buka aplikasi LinkAja.',
-                'Pilih menu Kirim Uang > Kirim ke Rekening Bank.',
-                'Masukkan kode pembayaran sebagai nomor rekening.',
-                'Masukkan jumlah sesuai tagihan.'
+                'Buka aplikasi LinkAja di ponsel Anda.',
+                'Pilih menu "Bayar" dan masukkan nomor Virtual Account dari tiket bus yang dipesan.',
+                'Pastikan detail pembayaran sudah benar dan lanjutkan.',
+                'Simpan bukti pembayaran yang ditampilkan di aplikasi.'
             ],
+
+            Gopay: [
+                'Buka aplikasi Gojek, pilih menu "GoPay" atau "Bayar".',
+                'Masukkan nomor Virtual Account yang diberikan setelah pemesanan tiket bus.',
+                'Konfirmasi jumlah pembayaran dan selesaikan transaksi.',
+                'Simpan bukti pembayaran untuk referensi pembelian tiket bus.'
+            ],
+
             ShopeePay: [
-                'Buka aplikasi ShopeePay.',
-                'Pilih menu Transfer > Kirim ke Bank.',
-                'Masukkan kode pembayaran sebagai nomor rekening.',
-                'Masukkan jumlah sesuai tagihan.'
+                'Buka aplikasi Shopee dan masuk ke "ShopeePay".',
+                'Pilih opsi "Transfer" dan pilih bank tujuan (misalnya BNI, BCA, atau Mandiri) yang terkait dengan Virtual Account.',
+                'Masukkan nomor Virtual Account yang diberikan dari pemesanan tiket bus.',
+                'Konfirmasi detail pembayaran, pilih sumber dana dari ShopeePay, lalu selesaikan transaksi.',
+                'Simpan bukti pembayaran untuk referensi transaksi tiket bus.'
             ]
         };
 
@@ -148,6 +155,7 @@
         document.getElementById('finishButton').onclick = () => {
             alert("Pembayaran selesai. Terima kasih!");
             // Navigasi ke halaman detail tiket jika perlu
+            window.location.href = "/Tiket";
         };
 
         // Inisialisasi instruksi dan kode pembayaran saat halaman dimuat

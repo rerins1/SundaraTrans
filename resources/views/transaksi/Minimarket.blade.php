@@ -64,14 +64,25 @@
 
         const minimarketInstructions = {
             Alfamart: [
-                'Kunjungi minimarket Alfamart terdekat.',
-                'Tunjukkan kode pembayaran kepada kasir.',
-                'Bayar sesuai jumlah tagihan.'
+            'Pembayaran dapat dilakukan melalui Seluruh Gerai Alfamart.',
+            'Anda akan mendapatkan Kode Pembayaran.',
+            'Catat Kode Pembayaran yang tertera.',
+            'Silahkan pergi ke gerai Alfamart terdekat dan bayar kepada kasir dengan menyebutkan "Pembayaran SundaraTrans.com"',
+            'Silahkan berikan kode pembayaran yang anda dapat pada saat pemesanan.',
+            'Pastikan Nama dan Jumlah bayar yang disebutkan petugas kasir Alfamart sesuai dengan pemesan anda.',
+            'Kasir akan melakukan proses pembayaran, sampai mencetak struk.',
+            'Simpan struk yang dicetak di kasir Alfamart sebagai bukti pembayaran anda.'
             ],
+            
             Indomaret: [
-                'Kunjungi minimarket Indomaret terdekat.',
-                'Tunjukkan kode pembayaran kepada kasir.',
-                'Bayar sesuai jumlah tagihan.'
+                'Pembayaran dapat dilakukan melalui Seluruh Gerai Indomaret.',
+                'Anda akan mendapatkan Kode Pembayaran.',
+                'Catat Kode Pembayaran yang tertera.',
+                'Silahkan pergi ke gerai Indomaret terdekat dan bayar kepada kasir dengan menyebutkan "Pembayaran SundaraTrans.com"',
+                'Silahkan berikan kode pembayaran yang anda dapat pada saat pemesanan.',
+                'Pastikan Nama dan Jumlah bayar yang disebutkan petugas kasir Indomaret sesuai dengan pemesan anda.',
+                'Kasir akan melakukan proses pembayaran, sampai mencetak struk.',
+                'Simpan struk yang dicetak di kasir Indomaret sebagai bukti pembayaran anda.'
             ]
         };
 
@@ -123,6 +134,7 @@
         document.getElementById('finishButton').onclick = () => {
             alert("Pembayaran selesai. Terima kasih!");
             // Navigasi ke halaman detail tiket jika perlu
+            window.location.href = "/Tiket";
         };
 
         // Inisialisasi instruksi dan kode pembayaran saat halaman dimuat

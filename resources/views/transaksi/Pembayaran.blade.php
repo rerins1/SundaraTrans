@@ -42,7 +42,7 @@
                     <div class="flex justify-center items-center">
                         <input type="radio" name="paymentMethod" id="paymentMethod-Bank" value="Bank" class="form-radio text-red-500 h-4 w-4 mr-2" />
                         <label for="paymentMethod-Bank" class="cursor-pointer">
-                            <img src="{{ asset('img/Bank/bank.png') }}" alt="Bank" class="w-72 h-20 object-contain" />
+                            <img src="{{ asset('img/Bank/virtual-account.png') }}" alt="Bank" class="w-72 h-20 object-contain" />
                         </label>
                     </div>
                     <!-- Tambahkan logo bank lainnya di sini -->
@@ -54,7 +54,7 @@
                     <div class="flex justify-center items-center">
                         <input type="radio" name="paymentMethod" id="paymentMethod-Minimarket" value="Minimarket" class="form-radio text-red-500 h-4 w-4 mr-2" />
                         <label for="paymentMethod-Minimarket" class="cursor-pointer">
-                            <img src="{{ asset('img/Minimarket/minimarket.png') }}" alt="Minimarket" class="w-72 h-20 object-contain" />
+                            <img src="{{ asset('img/Minimarket/Gerai.png') }}" alt="Minimarket" class="w-72 h-20 object-contain" />
                         </label>
                     </div>
                     <!-- Tambahkan logo minimarket lainnya di sini -->
@@ -66,7 +66,7 @@
                     <div class="flex justify-center items-center">
                         <input type="radio" name="paymentMethod" id="paymentMethod-EWallet" value="EWallet" class="form-radio text-red-500 h-4 w-4 mr-2" />
                         <label for="paymentMethod-EWallet" class="cursor-pointer">
-                            <img src="{{ ('img/EWallet/e-wallet.png') }}" alt="EWallet" class="w-72 h-20 object-contain" />
+                            <img src="{{ asset('img/EWallet/E-Wallet.png') }}" alt="EWallet" class="w-72 h-20 object-contain" />
                         </label>
                     </div>
                     <!-- Tambahkan logo e-wallet lainnya di sini -->
@@ -107,7 +107,7 @@
                     </div>
 
                     <div class="flex justify-between w-full max-w-screen-lg mt-8">
-                        <button onclick="navigateToBiodataForm()" class="px-4 py-2 rounded-lg bg-blue-500 text-white">
+                        <button onclick="navigateToSelectSeat()" class="px-4 py-2 rounded-lg bg-blue-500 text-white">
                             SEBELUMNYA
                         </button>
                         <button onclick="handleNextClick()" class="px-4 py-2 rounded-lg bg-red-500 text-white">
@@ -145,13 +145,27 @@
                         <span class="font-semibold">Jumlah Penumpang</span>
                         <span class='text-sm'>{{ $jumlah_penumpang }}</span>
                     </div>
-                    <div class="flex justify-between border-b pb-2">
+                    <div class="space-y-2">
                         <span class="font-semibold">Nama Penumpang</span>
-                        <span class='text-sm'>{{ $nama_penumpang }}</span>
-                    </div>
-                    <div class="flex justify-between border-b pb-2">
-                        <span class="font-semibold">Nomor Kursi</span>
-                        <span class='text-sm'>{{ implode(', ', $selected_seats) }}</span>
+                        @if(is_array($nama_penumpang) && count($nama_penumpang) > 0)
+                            @foreach($nama_penumpang as $index => $nama)
+                                <div class="flex items-center bg-gray-50 p-3 rounded-lg">
+                                    <div class="flex items-center flex-1">
+                                        <span class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-sm text-blue-600 mr-3">
+                                            {{ $index + 1 }}
+                                        </span>
+                                        <span>{{ $nama }}</span>
+                                    </div>
+                                    <span class="text-sm text-gray-500">
+                                        Kursi: {{ $selected_seats[$index] ?? '-' }}
+                                    </span>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="text-center py-3 text-gray-500">
+                                Tidak ada data penumpang
+                            </div>
+                        @endif
                     </div>
                     <div class="flex justify-between border-b pb-2">
                         <span class="font-semibold">Pembayaran</span>
@@ -165,17 +179,22 @@
     <x-footer></x-footer>
 
     <script>
+        // Menampilkan Modal
+        function openModal() {
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        // Menutup Modal
         function closeModal() {
             document.getElementById('modal').classList.add('hidden');
         }
 
-        function navigateToBiodataForm() {
+        function navigateToSelectSeat() {
             // Tambahkan logika untuk navigasi ke halaman Biodata Form
-            window.location.href = '/kursi'; // Ganti dengan URL yang sesuai
+            window.location.href = '/select-seat'; // Ganti dengan URL yang sesuai
         }
 
         function handleNextClick() {
-            // Tambahkan logika untuk memeriksa pilihan metode pembayaran dan melanjutkan
             const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
             if (selectedMethod) {
                 document.getElementById('selectedPaymentMethod').innerText = selectedMethod.value;
@@ -183,11 +202,11 @@
                 // Menentukan URL tujuan berdasarkan metode pembayaran yang dipilih
                 let nextUrl = '';
                 if (selectedMethod.value === 'EWallet') {
-                    nextUrl = '/E-Wallet'; // Ganti dengan URL yang sesuai untuk E-Wallet
+                    nextUrl = '/booking/payment/method/e-wallet'; // URL yang sesuai untuk E-Wallet
                 } else if (selectedMethod.value === 'Minimarket') {
-                    nextUrl = '/Minimarket'; // Ganti dengan URL yang sesuai untuk Minimarket
+                    nextUrl = '/booking/payment/method/minimarket'; // URL yang sesuai untuk Minimarket
                 } else if (selectedMethod.value === 'Bank') {
-                    nextUrl = '/Virtual-Account'; // Ganti dengan URL yang sesuai untuk Virtual Account
+                    nextUrl = '/booking/payment/method/virtual-account'; // URL yang sesuai untuk Virtual Account
                 }
 
                 // Navigasi ke halaman yang sesuai

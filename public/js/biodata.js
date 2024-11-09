@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     id="passenger-input-${i}"
                     name="nama_penumpang[]" 
                     class="w-full p-2 border rounded" 
+                    required
                     placeholder="Masukkan Nama Penumpang ${i}" />
             `;
             
