@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BusTicketController;
 use App\Http\Controllers\Auth\AdminLoginController;
+use App\Http\Controllers\Auth\AuthController;
 
 // Home route
 Route::get('/', function () {
@@ -55,10 +56,6 @@ Route::get('/Tiket', function () {
     return view('transaksi.Tiket');
 })->name('show.ticket');
 
-Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
-});
-
 Route::get('/bus-info', function () {
     return view('information.bus-info');
 });
@@ -84,23 +81,28 @@ Route::get('/live-tracking', function () {
 });
 
 
+// Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [AuthController::class, 'login']);
+    Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('register');
+    Route::post('register', [AuthController::class, 'register']);
+});
 
-// User routes
-Route::middleware(['auth'])->group(function () {
+// User Routes
+Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return view('user.dashboard');
     })->name('dashboard');
 });
 
-// Admin routes
-Route::prefix('admin')->group(function () {
-    Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
-    Route::post('/login', [AdminLoginController::class, 'login']);
-    Route::post('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
-
-    Route::middleware(['admin'])->group(function () {
+// Admin Routes
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::prefix('admin')->group(function () {
         Route::get('/dashboard', function () {
             return view('admin.dashboard');
         })->name('admin.dashboard');
     });
 });
+
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
