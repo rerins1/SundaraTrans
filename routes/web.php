@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\BusTicketController;
-use App\Http\Controllers\Auth\AdminLoginController;
-use App\Http\Controllers\Auth\AuthController;
 
 // Home route
 Route::get('/', function () {
@@ -56,6 +56,64 @@ Route::get('/Tiket', function () {
     return view('transaksi.Tiket');
 })->name('show.ticket');
 
+Route::middleware(['guest'])->group(function () {
+    Route::get('/registrasi', [AuthController::class, 'showRegistrasi'])->name('registrasi');
+    Route::post('/registrasi/submit', [AuthController::class, 'submitRegistrasi'])->name('registrasi.submit');
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login/submit', [AuthController::class, 'submitLogin'])->name('login.submit');
+    
+    // Admin login routes
+    Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login.form');
+    Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login');
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->name('logout')
+    ->middleware('auth');
+
+// Protected Admin Routes
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+});
+
+// Route::get('/dashboard', function () {
+//     return view('admin.Dashboard');
+// });
+
+Route::get('/datajadwaltiket', function () {
+    return view('admin.DataJadwalTiket');
+});
+
+Route::get('/databookingtiket', function () {
+    return view('admin.DataBookingTiket');
+});
+
+Route::get('/livegpsbus', function () {
+    return view('admin.LiveGPSBus');
+});
+
+Route::get('/databus', function () {
+    return view('admin.DataBus');
+});
+
+Route::get('/datapenumpang', function () {
+    return view('admin.DataPenumpang');
+});
+
+Route::get('/datasupir', function () {
+    return view('admin.DataSupir');
+});
+
+Route::get('/laporanpendapatan', function () {
+    return view('admin.LaporanPendapatan');
+});
+
+Route::get('/backupdata', function () {
+    return view('admin.BackupData');
+});
+
 Route::get('/bus-info', function () {
     return view('information.bus-info');
 });
@@ -79,30 +137,3 @@ Route::get('/bus-code', function () {
 Route::get('/live-tracking', function () {
     return view('tracking.live-tracking');
 });
-
-
-// Authentication Routes
-Route::middleware('guest')->group(function () {
-    Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [AuthController::class, 'login']);
-    Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('register');
-    Route::post('register', [AuthController::class, 'register']);
-});
-
-// User Routes
-Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('user.dashboard');
-    })->name('dashboard');
-});
-
-// Admin Routes
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::prefix('admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
-    });
-});
-
-Route::post('logout', [AuthController::class, 'logout'])->name('logout');

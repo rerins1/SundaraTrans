@@ -32,7 +32,6 @@
                     <p><strong>Nama:</strong></p>
                     <p><strong>Telepon:</strong></p>
                     <p><strong>Email:</strong> rendyriansyah@example.com</p>
-                    <p><strong>Tanggal Pesan:</strong> 10-10-2024, 13:00</p>
                 </div>
             </div>
 
