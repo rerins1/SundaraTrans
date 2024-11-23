@@ -30,19 +30,19 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div class="bg-blue-400 text-white p-4 rounded">
                         <h3 class="text-xl font-bold mb-2">Data Penumpang</h3>
-                        <a href="/datapenumpang" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
+                        <a href="/admin/users" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                     <div class="bg-green-500 text-white p-4 rounded">
                         <h3 class="text-xl font-bold mb-2">Data Sopir</h3>
-                        <a href="/datasupir" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
+                        <a href="/admin/drivers" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                     <div class="bg-yellow-500 text-white p-4 rounded">
                         <h3 class="text-xl font-bold mb-2">Data Jadwal Tiket</h3>
-                        <a href="/datajadwaltiket" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
+                        <a href="/admin/tickets" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                     <div class="bg-red-500 text-white p-4 rounded">
                         <h3 class="text-xl font-bold mb-2">Data Bus</h3>
-                        <a href="/databus" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
+                        <a href="/admin/data-bus" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                 </div>
             </div>

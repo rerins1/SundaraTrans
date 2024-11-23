@@ -253,7 +253,7 @@
         document.getElementById('finishButton').onclick = () => {
             alert("Pembayaran selesai. Terima kasih!");
             // Navigasi ke halaman /Tiket
-            window.location.href = "/Tiket";
+            window.location.href = "/";
         };
 
         // Inisialisasi instruksi dan kode pembayaran saat halaman dimuat

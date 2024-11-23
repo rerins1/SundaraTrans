@@ -10,34 +10,40 @@
 </head>
 
 <body class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+    {{-- Tambahkan debugging di sini --}}
+    @if(isset($booking))
+        {{ dd($booking) }}
+    @endif
 
-    
+    <!-- Konten tiket yang sudah ada -->
+    @if(isset($booking) && $booking->ticket)
     <div id="ticket-details" class="bg-white rounded-lg shadow-lg w-full max-w-4xl p-6">
-        <!-- Header Shopee-like style -->
+        <!-- Header -->
         <div class="flex justify-between items-center border-b pb-4">
             <h1 class="text-2xl font-bold text-orange-600">Sundara Trans | E-Ticket</h1>
             <div class="text-right">
-                <p class="text-sm">Kode Booking: <span class="font-bold">SDTN7627374</span></p>
+                <p class="text-sm">Kode Booking: <span class="font-bold">{{ $booking->kode_booking }}</span></p>
                 <p class="text-sm">Diterbitkan oleh: Sundara Trans</p>
             </div>
         </div>
 
         <!-- Booking & Passenger Information -->
         <div class="grid grid-cols-2 gap-6 mt-4">
-            <!-- Left - Booking Info -->
             <div>
                 <h2 class="text-lg font-semibold text-gray-700">Booking Information</h2>
                 <div class="mt-2">
-                    <p><strong>Booking ID:</strong> SDTN7627374</p>
-                    <p><strong>Nama:</strong></p>
-                    <p><strong>Telepon:</strong></p>
-                    <p><strong>Email:</strong> rendyriansyah@example.com</p>
+                    <p><strong>Booking ID:</strong> {{ $booking->kode_booking }}</p>
+                    <p><strong>Nama:</strong> {{ $booking->nama_pemesan }}</p>
+                    <p><strong>Telepon:</strong> {{ $booking->no_handphone }}</p>
+                    <p><strong>Email:</strong> {{ $booking->email }}</p>
                 </div>
             </div>
 
-            <!-- Barcode (can use image or similar for simplicity) -->
-            <div class="flex justify-center mb-6">
-                <img src="https://barcode.tec-it.com/barcode.ashx?data=SDTN7627374" alt="barcode" />
+            <!-- Barcode -->
+            <div class="flex justify-center items-center">
+                <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($booking->kode_booking, 'C39+') }}" 
+                        alt="barcode" 
+                        class="max-h-24" />
             </div>
         </div>
 
@@ -47,16 +53,21 @@
             <div class="grid grid-cols-3 gap-4 mt-2">
                 <div>
                     <p><strong>Bus:</strong> Sundara Trans</p>
-                    <p><strong>Kelas:</strong> EXECUTIVE</p>
+                    <p><strong>Kelas:</strong> {{ $booking->ticket->kelas }}</p>
                 </div>
                 <div>
-                    <p><strong>Dari:</strong> Bandung (Terminal Cicaheum)</p>
-                    <p><strong>Keberangkatan:</strong> 10-10-2024, 14:30</p>
+                    <p><strong>Dari:</strong> {{ $booking->ticket->dari }}</p>
+                    <p><strong>Keberangkatan:</strong> 
+                        {{ \Carbon\Carbon::parse($booking->ticket->tanggal)->format('d M Y') }}, 
+                        {{ $booking->ticket->waktu }}
+                    </p>
                 </div>
                 <div>
-                    <p><strong>Tujuan:</strong> Bali (Denpasar)</p>
-                    <p><strong>Harga:</strong> Rp. 1.100.000</p>
-                    <p class="text-green-600 font-bold mt-2"><strong>Status:</strong> Sudah Terbayar</p>
+                    <p><strong>Tujuan:</strong> {{ $booking->ticket->tujuan }}</p>
+                    <p><strong>Total Bayar:</strong> Rp {{ number_format($booking->total_pembayaran, 0, ',', '.') }}</p>
+                    <p class="text-green-600 font-bold mt-2">
+                        <strong>Status:</strong> {{ ucfirst($booking->status) }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -66,29 +77,36 @@
             <h2 class="text-lg font-semibold text-gray-700">Informasi Penumpang</h2>
             <div class="grid grid-cols-3 gap-4 mt-2">
                 <div>
-                    <p><strong>Nama Penumpang:</strong> John Doe</p>
+                    <p><strong>Nama Penumpang:</strong></p>
+                    <ul class="list-disc list-inside">
+                        @foreach($booking->nama_penumpang as $penumpang)
+                            <li>{{ $penumpang }}</li>
+                        @endforeach
+                    </ul>
                 </div>
                 <div>
-                    <p><strong>Nomor Kursi:</strong> 25</p>
+                    <p><strong>Nomor Kursi:</strong></p>
+                    <ul class="list-disc list-inside">
+                        @foreach($booking->kursi as $kursi)
+                            <li>Kursi {{ $kursi }}</li>
+                        @endforeach
+                    </ul>
                 </div>
                 <div>
-                    <p><strong>Kode Bus:</strong> SDT001</p>
+                    <p><strong>Kode Bus:</strong> {{ $booking->ticket->kode }}</p>
                 </div>
             </div>
         </div>
-
-        <!-- Important Notice -->
-        <div class="mt-6 border-t pt-4">
-            <h2 class="text-lg font-semibold text-red-600">Hal Penting</h2>
-            <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
-                <li>Mohon tiba di terminal 60 menit sebelum keberangkatan.</li>
-                <li>Tunjukkan e-Ticket beserta identitas resmi.</li>
-                <li>Anda dapat menggunakan e-Ticket dari email atau aplikasi.</li>
-                <li>Waktu yang tertera adalah waktu keberangkatan dari terminal asal.</li>
-                <li>Hubungi Call Center untuk kendala lainnya.</li>
-            </ul>
-        </div>
     </div>
+@else
+    <div class="text-center p-6">
+        <p class="text-red-600">Data tiket tidak ditemukan</p>
+        <a href="{{ route('search.bus.tickets') }}" 
+            class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded">
+            Kembali ke Pencarian
+        </a>
+    </div>
+@endif
 
     <!-- Tombol Download -->
     <div class="text-center mt-4 mb-6">
@@ -105,8 +123,13 @@
                 .set({
                     margin: 1,
                     filename: 'E-Ticket_SundaraTrans.pdf',
-                    html2canvas: { scale: 2 },
-                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        logging: true,
+                        letterRendering: true
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 })
                 .save();
         }

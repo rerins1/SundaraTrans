@@ -1,4 +1,4 @@
-
+<!-- resources/views/dataBus.blade.php -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -19,13 +19,13 @@
 
             <div class="p-6">
                 <h2 class="text-2xl font-bold mb-4">Data Bus</h2>
-                <button class="bg-green-500 text-white px-4 py-2 rounded mb-4"><i class="fas fa-plus mr-2"></i>Tambah Bus</button>
+                <a href="{{ route('dataBus.create') }}" class="bg-green-500 text-white px-4 py-2 rounded mb-4"><i class="fas fa-plus mr-2"></i>Tambah Bus</a>
 
                 <table class="w-full bg-white rounded-lg overflow-hidden shadow-lg">
                     <thead>
                         <tr class="bg-gray-800 text-white text-left">
                             <th class="py-3 px-4">No</th>
-                            <th class="py-3 px-4">Nama Bus</th>
+                            <th class="py-3 px-4">Kode Bus</th>
                             <th class="py-3 px-4">Nomor Polisi</th>
                             <th class="py-3 px-4">Kapasitas</th>
                             <th class="py-3 px-4">Status</th>
@@ -33,17 +33,23 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach ($buses as $bus)
                         <tr class="border-b">
-                            <td class="py-3 px-4">1</td>
-                            <td class="py-3 px-4">Sndara Trans</td>
-                            <td class="py-3 px-4">B1234XYZ</td>
-                            <td class="py-3 px-4">31</td>
-                            <td class="py-3 px-4">Tersedia</td>
+                            <td class="py-3 px-4">{{ $loop->iteration }}</td>
+                            <td class="py-3 px-4">{{ $bus->kode_bus }}</td>
+                            <td class="py-3 px-4">{{ $bus->no_polisi }}</td>
+                            <td class="py-3 px-4">{{ $bus->kapasitas }}</td>
+                            <td class="py-3 px-4">{{ $bus->status }}</td>
                             <td class="py-3 px-4 flex">
-                                <button class="bg-blue-500 text-white px-3 py-1 rounded mr-2"><i class="fas fa-edit"></i></button>
-                                <button class="bg-red-500 text-white px-3 py-1 rounded"><i class="fas fa-trash"></i></button>
+                                <a href="{{ route('dataBus.edit', $bus->id) }}" class="bg-blue-500 text-white px-3 py-1 rounded mr-2"><i class="fas fa-edit"></i></a>
+                                <form action="{{ route('dataBus.destroy', $bus->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus bus ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded"><i class="fas fa-trash"></i></button>
+                                </form>
                             </td>
                         </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>

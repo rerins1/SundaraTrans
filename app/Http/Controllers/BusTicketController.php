@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ticket;
+use App\Models\Booking;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Models\Ticket;
+
 
 class BusTicketController extends Controller
 {
@@ -156,30 +159,40 @@ class BusTicketController extends Controller
     public function storeSeatSelection(Request $request)
     {
         try {
-            // Validasi input
             $request->validate([
                 'nomor_kursi' => 'required|array',
                 'nomor_kursi.*' => 'required|integer|min:1|max:31',
             ]);
 
-            // Ambil jumlah penumpang dari session
             $jumlah_penumpang = session('jumlah_penumpang');
-
-            // Validasi jumlah kursi yang dipilih
+            
+            // Validasi apakah jumlah kursi yang dipilih sesuai dengan jumlah penumpang
             if (count($request->nomor_kursi) != $jumlah_penumpang) {
-                return back()->with('error', "Silahkan pilih {$jumlah_penumpang} kursi");
+                return back()->with('error', 'Jumlah kursi yang dipilih harus sesuai dengan jumlah penumpang.');
             }
 
-            // Simpan nomor kursi ke session
-            session(['selected_seats' => $request->nomor_kursi]);
+            // Cek kursi yang sudah dipesan
+            $bookedSeats = Booking::where('ticket_id', session('kode_tiket'))
+                ->where('status', '!=', 'cancelled')
+                ->pluck('kursi')
+                ->flatten()
+                ->toArray();
 
-            // Ganti redirect ke route pembayaran yang menerima GET
-            return redirect()->route('show.pembayaran')
-                ->with('success', 'Kursi berhasil dipilih');
+            $selectedSeats = $request->nomor_kursi;
 
+            // Validasi apakah kursi yang dipilih ada yang sudah dipesan
+            $conflictingSeats = array_intersect($selectedSeats, $bookedSeats);
+            if (!empty($conflictingSeats)) {
+                return back()->with('error', 'Kursi nomor ' . implode(', ', $conflictingSeats) . ' sudah dipesan.');
+            }
+
+            // Jika validasi lolos, simpan kursi yang dipilih ke session
+            session(['selected_seats' => $selectedSeats]);
+
+            return redirect()->route('show.pembayaran');
         } catch (\Exception $e) {
             Log::error('Error in storeSeatSelection: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan saat menyimpan pilihan kursi');
+            return back()->with('error', 'Terjadi kesalahan saat menyimpan pilihan kursi.');
         }
     }
 
