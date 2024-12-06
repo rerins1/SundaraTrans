@@ -13,7 +13,7 @@
         <x-sidebar></x-sidebar> <!-- Menyertakan komponen sidebar (jika ada) -->
 
         <!-- Main Content -->
-        <main class="flex-1">
+        <main class="flex-1 ml-64">
             <div class="p-6">
                 @yield('content') <!-- Isi konten dari halaman yang menggunakan layout ini -->
             </div>

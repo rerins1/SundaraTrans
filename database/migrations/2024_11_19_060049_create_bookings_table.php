@@ -10,7 +10,7 @@ class CreateBookingsTable extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_booking')->unique();
+            $table->string('kode_booking')->unique()->after('id');
             $table->string('nama_pemesan');
             $table->string('email');
             $table->string('no_handphone');
@@ -20,7 +20,7 @@ class CreateBookingsTable extends Migration
             $table->unsignedBigInteger('ticket_id'); // Relasi ke tiket
             $table->integer('jumlah_penumpang');
             $table->decimal('total_pembayaran', 10, 2);
-            $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending')->after('total_pembayaran');
             $table->timestamps();
 
             $table->foreign('ticket_id')->references('id')->on('tickets')->onDelete('cascade');

@@ -13,7 +13,7 @@
         <x-sidebar></x-sidebar>
 
         <!-- Main Content -->
-        <main class="flex-1">
+        <main class="flex-1 ml-64">
             <x-admin-header></x-admin-header>
 
             <!-- Data Penumpang Section -->
@@ -30,7 +30,7 @@
                     <table class="w-full bg-white rounded-lg shadow-lg overflow-hidden">
                         <thead>
                             <tr class="bg-gray-800 text-white">
-                                <th class="py-3 px-4">ID</th>
+                                <th class="py-3 px-4">No</th>
                                 <th class="py-3 px-4">Nama</th>
                                 <th class="py-3 px-4">Email</th>
                                 <th class="py-3 px-4">Password</th>
@@ -40,22 +40,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($users as $user)
+                            @foreach ($users as $index => $user)
                                 <tr class="border-b hover:bg-gray-100">
-                                    <td class="py-3 px-4">{{ $user->id }}</td>
+                                    <!-- Hitung No berdasarkan halaman -->
+                                    <td class="py-3 px-4">{{ $loop->iteration + ($users->currentPage() - 1) * $users->perPage() }}</td>
                                     <td class="py-3 px-4">{{ $user->name }}</td>
                                     <td class="py-3 px-4">{{ $user->email }}</td>
                                     <td class="py-3 px-4">********</td>
                                     <td class="py-3 px-4 capitalize">{{ $user->role }}</td>
                                     <td class="py-3 px-4">{{ $user->phone }}</td>
                                     <td class="py-3 px-4 flex space-x-2">
-                                        <a href="{{ route('user.edit', $user->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded flex items-center">
-                                            <i class="fas fa-edit mr-1"></i>Edit
+                                        <a href="{{ route('user.edit', $user->id) }}" class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition">
+                                            Edit
                                         </a>
                                         <form action="{{ route('user.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded"><i class="fas fa-trash"></i>Hapus
+                                            <button type="submit"
+                                                    class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition">
+                                                Delete
                                             </button>
                                         </form>
                                     </td>
@@ -67,7 +70,7 @@
 
                 <!-- Pagination -->
                 <div class="mt-4">
-                    {{ $users->links() }}
+                    {{ $users->links('pagination::tailwind') }}
                 </div>
             </div>
         </main>

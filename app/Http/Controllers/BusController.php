@@ -8,9 +8,25 @@ use Illuminate\Http\Request;
 class BusController extends Controller
 {
     // Menampilkan daftar bus
-    public function index()
+    public function index(Request $request)
     {
-        $buses = Bus::all();
+        // Ambil parameter pencarian dari query string
+        $search = $request->input('search');
+
+        // Query untuk mendapatkan data bus
+        $buses = Bus::query();
+
+        // Jika ada pencarian, tambahkan kondisi
+        if ($search) {
+            $buses->where('kode_bus', 'like', "%{$search}%")
+                ->orWhere('no_polisi', 'like', "%{$search}%")
+                ->orWhere('status', 'like', "%{$search}%");
+        }
+
+        // Paginate hasil query
+        $buses = $buses->paginate(10);
+
+        // Kembalikan ke view dengan data bus
         return view('admin.bus.DataBus', compact('buses'));
     }
 

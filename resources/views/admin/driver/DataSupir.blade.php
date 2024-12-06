@@ -11,7 +11,7 @@
     <div class="flex h-screen">
         <x-sidebar></x-sidebar>
 
-        <main class="flex-1">
+        <main class="flex-1 ml-64">
             <x-admin-header></x-admin-header>
 
             <div class="p-6">
@@ -36,23 +36,31 @@
                                 <td class="py-3 px-4">
                                     <img src="{{ asset('storage/' . $driver->photo) }}" alt="{{ $driver->name }}" class="w-12 h-12 rounded-full object-cover">
                                 </td>
-                                <td class="py-3 px-4">{{ $index + 1 }}</td>
+                                <td class="py-3 px-4">{{ $loop->iteration + ($drivers->firstItem() - 1) }}</td>
                                 <td class="py-3 px-4">{{ $driver->name }}</td>
                                 <td class="py-3 px-4">{{ $driver->phone }}</td>
                                 <td class="py-3 px-4">{{ $driver->email }}</td>
                                 <td class="py-3 px-4">{{ $driver->address }}</td>
-                                <td class="py-3 px-4 flex">
-                                    <a href="{{ route('drivers.edit', $driver->id) }}" class="bg-blue-500 text-white px-3 py-1 rounded mr-2"><i class="fas fa-edit"></i></a>
+                                <td class="py-3 px-4 flex space-x-2">
+                                    <a href="{{ route('drivers.edit', $driver->id) }}" class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition">
+                                        Edit
+                                    </a>
                                     <form action="{{ route('drivers.destroy', $driver->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded"><i class="fas fa-trash"></i></button>
+                                        <button type="submit"
+                                        class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition">
+                                        Delete
+                                    </button>
                                     </form>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+                <div class="mt-4">
+                    {{ $drivers->links('pagination::tailwind') }}
+                </div>
             </div>
         </main>
     </div>

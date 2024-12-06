@@ -14,7 +14,7 @@
         <x-sidebar></x-sidebar>
 
         <!-- Main Content -->
-        <main class="flex-1">
+        <main class="flex-1 ml-64">
         <x-admin-header></x-admin-header>
 
             <div class="p-6">
@@ -41,7 +41,7 @@
                     <tbody>
                         @foreach ($tickets as $index => $ticket)
                         <tr class="border-b">
-                            <td class="py-3 px-4">{{ $index + 1 }}</td>
+                            <td class="py-3 px-4">{{ $loop->iteration + ($tickets->firstItem() - 1) }}</td>
                             <td class="py-3 px-4">{{ $ticket->kelas }}</td>
                             <td class="py-3 px-4">{{ $ticket->kode }}</td>
                             <td class="py-3 px-4">{{ $ticket->tanggal }}</td>
@@ -50,15 +50,16 @@
                             <td class="py-3 px-4">{{ $ticket->tujuan }}</td>
                             <td class="py-3 px-4">{{ $ticket->kursi }}</td>
                             <td class="py-3 px-4">Rp{{ number_format($ticket->harga, 0, ',', '.') }}</td>
-                            <td class="py-3 px-4 flex">
-                                <a href="{{ route('admin.tickets.edit', $ticket->id) }}" class="bg-blue-500 text-white px-3 py-1 rounded mr-2">
-                                    <i class="fas fa-edit"></i>
+                            <td class="py-3 px-4 flex space-x-2">
+                                <a href="{{ route('admin.tickets.edit', $ticket->id) }}" class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition">
+                                    Edit
                                 </a>
                                 <form action="{{ route('admin.tickets.destroy', $ticket->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus tiket ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">
-                                        <i class="fas fa-trash"></i>
+                                    <button type="submit"
+                                        class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition">
+                                        Delete
                                     </button>
                                 </form>
                             </td>
@@ -66,6 +67,10 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                <div class="mt-4">
+                    {{ $tickets->links('pagination::tailwind') }}
+                </div>
             </div>
         </main>
     </div>

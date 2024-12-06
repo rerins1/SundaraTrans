@@ -11,7 +11,10 @@ class AdminTicketController extends Controller
     public function index()
     {
         Log::info('Route tickets.index dipanggil.');
-        $tickets = Ticket::all();
+        
+        // Menggunakan paginate untuk membagi halaman
+        $tickets = Ticket::paginate(10); 
+
         return view('admin.tiket.datajadwaltiket', compact('tickets'));
     }
 
@@ -64,4 +67,5 @@ class AdminTicketController extends Controller
         $ticket->delete();
         return redirect()->route('admin.tickets.index')->with('success', 'Tiket berhasil dihapus.');
     }
+
 }

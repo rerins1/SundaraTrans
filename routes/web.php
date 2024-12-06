@@ -8,6 +8,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\BusTicketController;
 use App\Http\Controllers\AdminTicketController;
+use App\Http\Controllers\Admin\AdminBookingController;
 
 // Home route
 Route::get('/', function () {
@@ -48,19 +49,19 @@ Route::prefix('booking')->group(function () {
                 return view('transaksi.Minimarket');
             })->name('payment.minimarket');
 
-            Route::get('/virtual-account', function () {
-                return view('transaksi.Virtual-Account');
-            })->name('payment.va');
+            Route::get('/virtual-account', [BusTicketController::class, 'showVirtualAccount'])->name('payment.va');
+            Route::post('/virtual-account', [BusTicketController::class, 'storePayment'])->name('payment.store.va');
         });
     });
 });
 
-Route::post('/payment/complete', [BusTicketController::class, 'completePayment'])
-    ->name('payment.complete');
+Route::get('/success', function () {
+    return view('transaksi.success');
+})->name('success.page');
 
 Route::get('/Tiket', function () {
     return view('transaksi.Tiket');
-});
+})->name('ticket.page');
 
 Route::middleware(['guest'])->group(function () {
     Route::get('/registrasi', [AuthController::class, 'showRegistrasi'])->name('registrasi');
@@ -120,9 +121,14 @@ Route::prefix('admin')->middleware('auth')->group(function() {
     Route::delete('drivers/{driver}', [DriverController::class, 'destroy'])->name('drivers.destroy');
 });
 
-Route::get('/databookingtiket', function () {
-    return view('admin.DataBookingTiket');
+Route::prefix('admin')->group(function () {
+    Route::get('/bookings', [AdminBookingController::class, 'index'])->name('admin.bookings.index');
+    Route::get('/bookings/{id}/edit', [AdminBookingController::class, 'edit'])->name('admin.bookings.edit');
+    Route::put('/bookings/{id}', [AdminBookingController::class, 'update'])->name('admin.bookings.update');
+    Route::delete('/bookings/{id}', [AdminBookingController::class, 'destroy'])->name('admin.bookings.destroy');
+    Route::post('/bookings/{id}/confirm', [AdminBookingController::class, 'confirm'])->name('admin.bookings.confirm');
 });
+
 
 Route::get('/livegpsbus', function () {
     return view('admin.LiveGPSBus');
@@ -159,4 +165,12 @@ Route::get('/bus-code', function () {
 
 Route::get('/live-tracking', function () {
     return view('tracking.live-tracking');
+});
+
+Route::get('/Live-Tracking/SDT-001', function () {
+    return view('tracking.live-tracking');
+});
+
+Route::get('/Live-Tracking/SDT-001', function () {
+    return view('tracking.SDT001');
 });

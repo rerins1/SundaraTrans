@@ -14,7 +14,7 @@
         <x-sidebar></x-sidebar>
 
         <!-- Main Content -->
-        <main class="flex-1">
+        <main class="flex-1 ml-64">
             <x-admin-header></x-admin-header>        
             
             <div class="p-6">
@@ -41,8 +41,8 @@
                         <a href="/admin/tickets" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                     <div class="bg-red-500 text-white p-4 rounded">
-                        <h3 class="text-xl font-bold mb-2">Data Bus</h3>
-                        <a href="/admin/data-bus" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
+                        <h3 class="text-xl font-bold mb-2">Data Pesanan Tiket</h3>
+                        <a href="/admin/bookings" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                 </div>
             </div>

@@ -15,7 +15,7 @@
         <x-sidebar></x-sidebar>
 
         <!-- Main Content -->
-        <main class="flex-1">
+        <main class="flex-1 ml-64">
             <x-admin-header></x-admin-header>
 
             <div class="p-6">

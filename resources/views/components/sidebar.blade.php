@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<aside class="w-64 bg-gray-800 text-white">
+<aside class="w-64 bg-gray-800 text-white fixed top-0 bottom-0 left-0 overflow-y-auto">
     <div class="p-4">
         <h1 class="self-center text-2xl font-bold whitespace-nowrap dark:text-white">Sundara Trans</h1>
     </div>
@@ -17,7 +17,7 @@
     <nav class="mt-4">
         <a href="/dashboard" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-home mr-2"></i> Beranda</a>
         <a href="/admin/tickets" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-calendar-alt mr-2"></i> Jadwal Tiket</a>
-        <a href="/databookingtiket" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-ticket-alt mr-2"></i> Data Booking Tiket</a>
+        <a href="/admin/bookings" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-ticket-alt mr-2"></i> Data Pesanan Tiket</a>
         <a href="/livegpsbus" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-bus mr-2"></i> Live GPS Bus</a>
         <a href="/admin/data-bus" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-bus mr-2"></i> Data Bus</a>
         <a href="/admin/users" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-users mr-2"></i> Data Penumpang</a>
