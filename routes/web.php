@@ -32,6 +32,8 @@ Route::prefix('booking')->group(function () {
         ->name('show.kursi');
     Route::post('/seat', [BusTicketController::class, 'storeSeatSelection'])
         ->name('store.seat');
+    Route::post('/cancel-booking', [BusTicketController::class, 'cancelBooking'])->name('cancel.booking');
+    Route::get('/seat/reselect', [BusTicketController::class, 'reselectSeats'])->name('reselect.seats');
 
     // Step 4: Payment
     Route::prefix('payment')->group(function () {
@@ -55,12 +57,14 @@ Route::prefix('booking')->group(function () {
     });
 });
 
-Route::get('/success', function () {
-    return view('transaksi.success');
-})->name('success.page');
+Route::post('/cek-tiket', [BusTicketController::class, 'cekTiket'])->name('cek.tiket');
 
 Route::get('/Tiket', function () {
     return view('transaksi.Tiket');
+})->name('ticket.page');
+
+Route::get('/E-Ticket', function () {
+    return view('transaksi.E-Ticket');
 })->name('ticket.page');
 
 Route::middleware(['guest'])->group(function () {
@@ -77,6 +81,9 @@ Route::middleware(['guest'])->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout')
     ->middleware('auth');
+
+Route::post('/logout-ajax', [AdminAuthController::class, 'logoutAjax'])->name('logout.ajax');
+
 
 // Protected Admin Routes
 Route::middleware(['auth', 'admin'])->group(function () {

@@ -11,6 +11,16 @@ class LockedSeat extends Model
 
     protected $fillable = ['ticket_id', 'seat_number', 'user_id', 'locked_until'];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Hapus otomatis kursi terkunci yang telah expired
+        static::addGlobalScope('removeExpired', function ($query) {
+            $query->where('expired_at', '>', now());
+        });
+    }
+
     public function ticket()
     {
         return $this->belongsTo(Ticket::class);

@@ -1,3 +1,16 @@
+@php
+    // Ambil kursi yang terkunci dan terisi dari database
+    $lockedSeats = \App\Models\LockedSeat::where('ticket_id', session('kode_tiket'))
+        ->where('expired_at', '>', now())
+        ->pluck('seat_number')
+        ->toArray();
+
+    $bookedSeats = \App\Models\Booking::where('ticket_id', session('kode_tiket'))
+        ->pluck('kursi')
+        ->flatten()
+        ->toArray();
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,83 +30,72 @@
     <!-- Main Content -->
     <div class="container mx-auto mt-4 md:mt-10 p-3 md:p-6 bg-white rounded-lg shadow-lg mb-10">
         <h2 class="text-xl md:text-2xl font-bold text-center mb-3 md:mb-6">Pilih Kursi Anda</h2>
-        <h2 class="text-xl md:text-2xl font-bold text-center mb-3 md:mb-6">KURSI DENGAN ISI 31</h2>
 
         <!-- Grid Container -->
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
             <!-- Seat Layout -->
-            <div class="md:col-span-8">
+            <div class="md:col-span-8 mx-auto">
                 <form action="{{ route('store.seat') }}" method="POST" id="seatForm">
                     @csrf
                     <input type="hidden" name="selected_seats" id="selectedSeatsInput">
-                    <div class="grid grid-cols-4 md:grid-cols-8 gap-2 md:gap-4 justify-center items-center">
-                        <!-- Left Seats -->
-                        <div class="col-span-2 md:col-span-3 ml-0 md:ml-auto">
-                            <div class="grid grid-rows-6 gap-2 md:gap-4">
-                                @foreach([1,2,5,6,9,10,13,14,17,18,21,22] as $index => $seatNumber)
-                                    @if($index % 2 == 0)
-                                        <div class="flex space-x-2 md:space-x-4">
-                                    @endif
-                                    <div class="seat-wrapper">
-                                        <input type="checkbox" 
-                                            name="nomor_kursi[]" 
-                                            value="{{ $seatNumber }}" 
-                                            id="seat-{{ $seatNumber }}"
-                                            class="hidden seat-checkbox">
-                                        <label for="seat-{{ $seatNumber }}" 
-                                            class="seat block w-8 h-8 md:w-12 md:h-12 border-2 border-gray-400 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors duration-200 text-xs md:text-base">
-                                            {{ $seatNumber }}
-                                        </label>
-                                    </div>
-                                    @if($index % 2 == 1)
-                                        </div>
-                                    @endif
-                                @endforeach
+                    
+                    <!-- Seat Layout -->
+                    <div class="space-y-4">
+                    <!-- Row 1 to 6 -->
+                    @foreach (range(1, 24, 4) as $seatNumber)
+                        <div class="flex justify-between">
+                            <div class="flex space-x-2">
+                                @include('partials.seat', [
+                                    'seatNumber' => $seatNumber,
+                                    'isLocked' => in_array($seatNumber, $lockedSeats),
+                                    'isBooked' => in_array($seatNumber, $bookedSeats)
+                                ])
+                                @include('partials.seat', [
+                                    'seatNumber' => $seatNumber + 1,
+                                    'isLocked' => in_array($seatNumber + 1, $lockedSeats),
+                                    'isBooked' => in_array($seatNumber + 1, $bookedSeats)
+                                ])
+                            </div>
+                            <div class="flex space-x-2">
+                                @include('partials.seat', [
+                                    'seatNumber' => $seatNumber + 2,
+                                    'isLocked' => in_array($seatNumber + 2, $lockedSeats),
+                                    'isBooked' => in_array($seatNumber + 2, $bookedSeats)
+                                ])
+                                @include('partials.seat', [
+                                    'seatNumber' => $seatNumber + 3,
+                                    'isLocked' => in_array($seatNumber + 3, $lockedSeats),
+                                    'isBooked' => in_array($seatNumber + 3, $bookedSeats)
+                                ])
                             </div>
                         </div>
+                    @endforeach
 
-                        <!-- Right Seats -->
-                        <div class="col-span-2 md:col-span-3 ml-0 md:ml-auto">
-                            <div class="grid grid-rows-7 gap-2 md:gap-4">
-                                @foreach([3,4,7,8,11,12,15,16,19,20,23,24,25,26] as $index => $seatNumber)
-                                    @if($index % 2 == 0)
-                                        <div class="flex space-x-2 md:space-x-4">
-                                    @endif
-                                    <div class="seat-wrapper">
-                                        <input type="checkbox" 
-                                            name="nomor_kursi[]" 
-                                            value="{{ $seatNumber }}" 
-                                            id="seat-{{ $seatNumber }}"
-                                            class="hidden seat-checkbox">
-                                        <label for="seat-{{ $seatNumber }}" 
-                                            class="seat block w-8 h-8 md:w-12 md:h-12 border-2 border-gray-400 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors duration-200 text-xs md:text-base">
-                                            {{ $seatNumber }}
-                                        </label>
-                                    </div>
-                                    @if($index % 2 == 1)
-                                        </div>
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <!-- Back Seats -->
-                        <div class="col-span-4 md:col-span-8 flex justify-center space-x-2 md:space-x-4 mt-2 md:mt-4">
-                            @foreach(range(27, 31) as $seatNumber)
-                                <div class="seat-wrapper">
-                                    <input type="checkbox" 
-                                        name="nomor_kursi[]" 
-                                        value="{{ $seatNumber }}" 
-                                        id="seat-{{ $seatNumber }}"
-                                        class="hidden seat-checkbox">
-                                    <label for="seat-{{ $seatNumber }}" 
-                                        class="seat block w-8 h-8 md:w-12 md:h-12 border-2 border-gray-400 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors duration-200 text-xs md:text-base">
-                                        {{ $seatNumber }}
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
+                    <!-- Row 7 (Seat 25-26) -->
+                    <div class="flex justify-end space-x-2">
+                        @include('partials.seat', [
+                            'seatNumber' => 25,
+                            'isLocked' => in_array(25, $lockedSeats),
+                            'isBooked' => in_array(25, $bookedSeats)
+                        ])
+                        @include('partials.seat', [
+                            'seatNumber' => 26,
+                            'isLocked' => in_array(26, $lockedSeats),
+                            'isBooked' => in_array(26, $bookedSeats)
+                        ])
                     </div>
+
+                    <!-- Back Row (Seat 27-31) -->
+                    <div class="flex justify-center space-x-2">
+                        @foreach (range(27, 31) as $seatNumber)
+                            @include('partials.seat', [
+                                'seatNumber' => $seatNumber,
+                                'isLocked' => in_array($seatNumber, $lockedSeats),
+                                'isBooked' => in_array($seatNumber, $bookedSeats)
+                            ])
+                        @endforeach
+                    </div>
+                </div>
                 </form>
             </div>
 
@@ -111,15 +113,13 @@
                     </div>
                     <div class="flex items-center">
                         <span class="w-4 h-4 md:w-6 md:h-6 bg-red-500 rounded mr-2"></span>
-                        <span class="text-sm md:text-base">Kursi Terisi</span>
+                        <span class="text-sm md:text-base">Kursi Terkunci/Terisi</span>
                     </div>
                 </div>
 
                 <div class="mb-4 md:mb-6">
                     <h3 class="text-base md:text-lg font-semibold mb-2">Kursi yang Dipilih:</h3>
-                    <ul id="selectedSeatsList" class="list-disc pl-5 text-sm md:text-base">
-                        <!-- Daftar kursi yang dipilih akan ditampilkan di sini -->
-                    </ul>
+                    <ul id="selectedSeatsList" class="list-disc pl-5 text-sm md:text-base"></ul>
                 </div>
 
                 <div class="text-center">
@@ -134,92 +134,105 @@
             </div>
         </div>
 
-        <!-- Navigation Buttons -->
-        <div class="mt-4 md:mt-8 flex justify-between">
-            <a href="{{ route('search.bus.tickets') }}"
-                class="bg-blue-500 text-white px-4 md:px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 text-sm md:text-base">
+        <!-- Tombol SEBELUMNYA -->
+        <div class="text-left mt-4">
+            <button 
+                id="sebelumnya-button"
+                class="bg-blue-500 text-white px-4 py-2 rounded-lg w-full md:w-auto"
+                onclick="window.location.href='{{ route('tickets.biodata', ['kode' => session('kode_tiket')]) }}'">
                 SEBELUMNYA
-            </a>
+            </button>
         </div>
     </div>
 
     <x-footer></x-footer>
 
-    <style>
-        .seat-wrapper .seat {
-            transition: all 0.2s ease-in-out;
-        }
-        
-        .seat-checkbox:checked + .seat {
-            background-color: #22c55e;
-            border-color: #22c55e;
-            color: white;
-        }
-
-        .seat-wrapper .seat:hover {
-            transform: scale(1.05);
-        }
-
-        .seat-checkbox:disabled + .seat {
-            background-color: #ef4444;
-            border-color: #ef4444;
-            color: white;
-            cursor: not-allowed;
-        }
-
-        /* Responsive adjustments for very small screens */
-        @media (max-width: 360px) {
-            .seat {
-                width: 24px !important;
-                height: 24px !important;
-                font-size: 0.7rem !important;
-            }
-        }
-    </style>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const maxSeats = {{ session('jumlah_penumpang', 1) }};
             const seatCheckboxes = document.querySelectorAll('.seat-checkbox');
             const selectedSeatsList = document.getElementById('selectedSeatsList');
             const submitButton = document.getElementById('submitButton');
             const selectedSeatsInput = document.getElementById('selectedSeatsInput');
             let selectedSeats = [];
-
-            function updateSelectedSeats() {
-                selectedSeatsList.innerHTML = '';
-                selectedSeats = [];
-                
+    
+            // Reset kursi yang sebelumnya dipilih saat halaman dimuat
+            function resetSelectedSeats() {
                 seatCheckboxes.forEach(checkbox => {
+                    // Hapus status terpilih
+                    checkbox.checked = false;
+    
+                    // Update UI label
+                    const label = document.querySelector(`label[for="${checkbox.id}"]`);
+                    if (label) {
+                        label.classList.remove('bg-green-500', 'text-white'); // Hapus highlight
+                        label.classList.add('hover:bg-green-100'); // Tambahkan efek hover
+                    }
+                });
+    
+                // Kosongkan daftar kursi di UI
+                if (selectedSeatsList) selectedSeatsList.innerHTML = '';
+    
+                // Kosongkan hidden input
+                if (selectedSeatsInput) selectedSeatsInput.value = '[]';
+    
+                // Disable tombol konfirmasi
+                if (submitButton) submitButton.disabled = true;
+            }
+    
+            // Update tampilan kursi berdasarkan pemilihan pengguna
+            function updateSelectedSeats() {
+                selectedSeatsList.innerHTML = ''; // Reset daftar kursi di UI
+                selectedSeats = []; // Reset array kursi
+    
+                seatCheckboxes.forEach(checkbox => {
+                    const label = document.querySelector(`label[for="${checkbox.id}"]`);
                     if (checkbox.checked) {
                         selectedSeats.push(checkbox.value);
+    
+                        // Tambahkan highlight ke kursi yang dipilih
+                        if (label) {
+                            label.classList.add('bg-green-500', 'text-white');
+                            label.classList.remove('hover:bg-green-100');
+                        }
+    
+                        // Tambahkan kursi ke daftar UI
                         const li = document.createElement('li');
                         li.textContent = `Kursi ${checkbox.value}`;
                         selectedSeatsList.appendChild(li);
+                    } else {
+                        // Hapus highlight jika kursi tidak dipilih
+                        if (label) {
+                            label.classList.remove('bg-green-500', 'text-white');
+                            label.classList.add('hover:bg-green-100');
+                        }
                     }
                 });
-
+    
+                // Simpan kursi yang dipilih di input hidden
                 selectedSeatsInput.value = JSON.stringify(selectedSeats);
+    
+                // Aktifkan tombol jika jumlah kursi sesuai
                 submitButton.disabled = selectedSeats.length !== maxSeats;
             }
-
+    
+            // Event listener untuk checkbox kursi
             seatCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
+                checkbox.addEventListener('change', function () {
                     const checkedSeats = document.querySelectorAll('.seat-checkbox:checked').length;
-                    
+    
                     if (checkedSeats > maxSeats) {
-                        this.checked = false;
-                        alert(`Anda hanya dapat memilih ${maxSeats} kursi`);
+                        this.checked = false; // Batalkan pemilihan jika melebihi batas
+                        alert(`Anda hanya dapat memilih ${maxSeats} kursi.`);
                     } else {
-                        const label = this.nextElementSibling;
-                        label.classList.toggle('bg-green-500', this.checked);
-                        label.classList.toggle('text-white', this.checked);
+                        updateSelectedSeats(); // Update UI
                     }
-                    
-                    updateSelectedSeats();
                 });
             });
+    
+            // Reset kursi saat halaman dimuat
+            resetSelectedSeats();
         });
-    </script>
+    </script>   
 </body>
 </html>

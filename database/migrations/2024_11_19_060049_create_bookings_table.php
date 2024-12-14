@@ -15,14 +15,14 @@ class CreateBookingsTable extends Migration
             $table->string('email');
             $table->string('no_handphone');
             $table->text('alamat');
-            $table->json('nama_penumpang'); // Untuk menyimpan array nama penumpang
-            $table->json('kursi'); // Untuk menyimpan array nomor kursi
-            $table->unsignedBigInteger('ticket_id'); // Relasi ke tiket
+            $table->json('nama_penumpang');
+            $table->json('kursi');
+            $table->unsignedBigInteger('ticket_id');
             $table->integer('jumlah_penumpang');
             $table->decimal('total_pembayaran', 10, 2);
+            $table->string('bukti_pembayaran')->nullable(); // New column for payment proof
             $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending')->after('total_pembayaran');
             $table->timestamps();
-
             $table->foreign('ticket_id')->references('id')->on('tickets')->onDelete('cascade');
         });
     }

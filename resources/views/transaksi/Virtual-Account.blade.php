@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @vite('resources/css/app.css')
     <title>Pembayaran Tiket</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-gray-100">
@@ -16,7 +17,7 @@
         <p class="text-center text-lg mt-2">Silahkan pilih ingin menggunakan Bank mana untuk melakukan pembayaran</p>
     </x-header>
 
-    <form action="{{ route('payment.store.va') }}" method="POST" class="mt-4">
+    <form action="{{ route('payment.store.va') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="max-w-lg mx-auto mt-20 mb-20 p-5 bg-white rounded-lg shadow-md">
 
@@ -69,8 +70,25 @@
             <input type="hidden" name="payment_code" id="paymentCodeInput">
             <input type="hidden" name="bank" id="bankInput">
 
-            <!-- Finish Button -->
-            <button type="submit" id="finishButton" class="mt-4 w-full p-2 bg-blue-600 text-white rounded-md">Selesaikan Pembayaran</button>
+            <!-- Pada bagian upload bukti pembayaran, tambahkan div untuk error message -->
+            <div class="mb-4 mt-4">
+                <label for="bukti_pembayaran" class="block text-gray-700 font-semibold">Upload Bukti Pembayaran</label>
+                <input type="file" id="bukti_pembayaran" name="bukti_pembayaran" 
+                        accept="image/jpeg,image/png,image/jpg" 
+                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md @error('bukti_pembayaran') border-red-500 @enderror">
+                
+                <!-- Tambahkan div untuk error message -->
+                <p id="bukti_pembayaran_error" class="text-red-500 text-sm mt-2 hidden"></p>
+                
+                @error('bukti_pembayaran')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+        
+            <!-- Finish Button with JavaScript validation -->
+            <button type="submit" id="finishButton" class="mt-4 w-full p-2 bg-blue-600 text-white rounded-md">
+                Selesaikan Pembayaran
+            </button>
         </div>
     </form>
 
@@ -172,16 +190,55 @@
                 alert("Kode pembayaran telah disalin!");
             });
         };
+        
+        // Event listener untuk tombol selesai        
+        document.getElementById('finishButton').addEventListener('click', function (e) {
+            e.preventDefault(); // Cegah form langsung submit
 
-        // Event listener untuk tombol selesai
-        document.getElementById('finishButton').onclick = () => {
+            const buktiPembayaran = document.getElementById('bukti_pembayaran');
+            const errorElement = document.getElementById('bukti_pembayaran_error');
+
+            // Reset error message
+            errorElement.textContent = '';
+            errorElement.classList.add('hidden');
+
+            if (!buktiPembayaran.files.length) {
+                // Tampilkan pesan error jika file belum diunggah
+                errorElement.textContent = 'Silahkan unggah bukti pembayaran terlebih dahulu.';
+                errorElement.classList.remove('hidden');
+                buktiPembayaran.classList.add('border-red-500');
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Peringatan',
+                    text: 'Silahkan unggah bukti pembayaran terlebih dahulu.',
+                    confirmButtonText: 'OK',
+                });
+
+                return;
+            }
+
             const selectedBank = document.getElementById('bank').value;
             const paymentCode = document.getElementById('paymentCode').value;
 
             // Isi nilai input tersembunyi
             document.getElementById('bankInput').value = selectedBank;
             document.getElementById('paymentCodeInput').value = paymentCode;
-        };
+
+            // Tampilkan Swal dan tunggu konfirmasi sebelum melanjutkan
+            Swal.fire({
+                icon: 'success',
+                title: 'Pembayaran Berhasil',
+                text: 'Silahkan Menunggu Konfirmasi dari kami. Dan lihat tiket Anda di halaman Beranda pada bagian Cek Tiket. Tiket juga telah dikirim ke email Anda.',
+                confirmButtonText: 'Mengerti',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Lanjutkan dengan form submission
+                    e.target.closest('form').submit();
+                }
+            });
+        });
+
 
         // Inisialisasi instruksi dan kode pembayaran saat halaman dimuat
         updateInstructions();

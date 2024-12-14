@@ -16,7 +16,7 @@
 
     <div class="justify-center p-6 min-h-screen">
         <!-- Popup Modal -->
-        <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+        <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg">
                 <h2 class="text-lg font-bold mb-4 text-center text-red-500">MOHON PERHATIANNYA!</h2>
                 <ul class="list-disc list-inside text-sm text-gray-700 space-y-2">
@@ -107,9 +107,10 @@
                     </div>
 
                     <div class="flex justify-between w-full max-w-screen-lg mt-8">
-                        <button onclick="navigateToSelectSeat()" class="px-4 py-2 rounded-lg bg-blue-500 text-white">
+                        <a href="{{ route('reselect.seats') }}" 
+                            class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
                             SEBELUMNYA
-                        </button>
+                        </a>
                         <button onclick="handleNextClick()" class="px-4 py-2 rounded-lg bg-red-500 text-white">
                             SELANJUTNYA
                         </button>
@@ -189,10 +190,10 @@
             document.getElementById('modal').classList.add('hidden');
         }
 
-        function navigateToSelectSeat() {
-            // Tambahkan logika untuk navigasi ke halaman Biodata Form
-            window.location.href = '/select-seat'; // Ganti dengan URL yang sesuai
-        }
+        // function navigateToSelectSeat() {
+        //     // Tambahkan logika untuk navigasi ke halaman Biodata Form
+        //     window.location.href = '/booking/seat'; // Ganti dengan URL yang sesuai
+        // }
 
         function handleNextClick() {
             const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');

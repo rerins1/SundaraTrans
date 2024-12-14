@@ -18,6 +18,7 @@ class Booking extends Model
         'ticket_id',
         'jumlah_penumpang',
         'total_pembayaran',
+        'bukti_pembayaran', // Add this line
         'status'
     ];
 

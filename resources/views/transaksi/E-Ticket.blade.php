@@ -30,17 +30,17 @@
                 <div>
                     <h2 class="text-lg font-semibold text-gray-700">Booking Information</h2>
                     <div class="mt-2">
-                        <p><strong>Kode Booking:</strong> {{ session('success') }}</p>
-                        <p><strong>Nama:</strong> {{ session('nama_pemesan') }}</p>
-                        <p><strong>Telepon:</strong> {{ session('no_handphone') }}</p>
-                        <p><strong>Email:</strong> {{ session('email') }}</p>
+                        <p><strong>Kode Booking:</strong> {{ $kode_booking ?? 'Tidak Tersedia' }}</p>
+                        <p><strong>Nama:</strong> {{ $nama_pemesan ?? 'Tidak Tersedia' }}</p>
+                        <p><strong>Telepon:</strong> {{ $no_handphone ?? 'Tidak Tersedia' }}</p>
+                        <p><strong>Email:</strong> {{ $email ?? 'Tidak Tersedia' }}</p>
                     </div>
                 </div>
 
                 <!-- Barcode -->
                 <div class="flex flex-col items-center justify-center border border-gray-300 rounded-lg p-4 bg-gray-50">
                     <img src="data:image/png;base64,{{ $barcode }}" alt="barcode" class="max-h-24 w-auto" />
-                    <p class="text-sm mt-2 text-gray-700">Kode Booking: <span class="font-bold">{{ session('success') }}</span></p>
+                    <p class="text-sm mt-2 text-gray-700">Kode Booking: <span class="font-bold">{{ $kode_booking ?? 'Tidak Tersedia' }}</span></p>
                 </div>
             </div>
 

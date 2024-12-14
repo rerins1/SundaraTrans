@@ -40,13 +40,7 @@
                             <div>
                                 <label class="block">Alamat</label>
                                 <input name="alamat" type="text" class="w-full p-2 border rounded" placeholder="Masukkan Alamat" />
-                            </div>
-                            <div class="col-span-2">
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="is_pemesan_penumpang" class="form-checkbox" />
-                                    <span class="ml-2">Penumpang Adalah Pemesan</span>
-                                </label>
-                            </div>                            
+                            </div>                          
                         </div>
                     </div>
 
@@ -88,12 +82,11 @@
 
                 <!-- Tombol Navigasi -->
                 <div class="md:flex md:justify-between mt-6 flex-col md:flex-row space-y-4 md:space-y-0">
-                    <button 
-                        id="sebelumnya-button"
-                        class="bg-blue-500 text-white px-4 py-2 rounded-lg w-full md:w-auto"
-                    >
+                    <a href="javascript:void(0);" 
+                        id="sebelumnya-button" 
+                        class="bg-blue-500 text-white px-4 py-2 rounded-lg w-full md:w-auto text-center">
                         SEBELUMNYA
-                    </button>
+                    </a>
                     <button 
                         type="submit"
                         class="bg-red-500 text-white px-4 py-2 rounded-lg w-full md:w-auto"
@@ -110,6 +103,16 @@
 
 
     <script src="{{ asset('js/biodata.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Handle tombol "SEBELUMNYA"
+            const sebelumnyaButton = document.getElementById('sebelumnya-button');
+            sebelumnyaButton.addEventListener('click', function (event) {
+                event.preventDefault(); // Mencegah validasi form dan pengiriman default
+                window.history.back(); // Arahkan ke halaman sebelumnya
+            });
+        });
+    </script>
     
 </body>
 </html>

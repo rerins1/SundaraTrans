@@ -107,7 +107,30 @@
     
             <!-- Cek Ticket Form -->
             <div id="cek" class="tab-content p-4 hidden">
-                <!-- ... (kode untuk cek tiket tetap sama) ... -->
+                <form class="space-y-4" action="{{ route('cek.tiket') }}" method="POST">
+                    @csrf
+                    <div>
+                        <label for="noHp" class="block text-sm font-bold">NO. HP</label>
+                        <input type="text" id="noHp" name="noHp" placeholder="No. Telepon" class="w-full p-2 border rounded-md shadow-sm" />
+                    </div>
+                    <div>
+                        <label for="kodeBooking" class="block text-sm font-bold">KODE BOOKING</label>
+                        <input type="text" id="kodeBooking" name="kodeBooking" placeholder="KODE BOOKING" class="w-full p-2 border rounded-md shadow-sm" style="text-transform: uppercase;" />
+                    </div>
+                    <div class="text-center pt-6">
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                            CEK TIKET
+                        </button>
+                    </div>
+                </form>
+            
+                <!-- Notifikasi Error -->
+                @if(session('error'))
+                    <div class="bg-red-200 text-red-800 border border-red-400 px-4 py-3 rounded relative mt-4">
+                        <strong class="font-bold">Error!</strong>
+                        <span class="block sm:inline">{{ session('error') }}</span>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -165,6 +188,16 @@
         const tanggalInput = document.getElementById('tanggal');
         const today = new Date().toISOString().split('T')[0];
         tanggalInput.setAttribute('min', today);
+    });
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        const errorAlert = document.querySelector('.bg-red-200');
+        if (errorAlert) {
+            setTimeout(() => {
+                errorAlert.style.opacity = '0';
+                setTimeout(() => errorAlert.remove(), 500); // Hapus elemen setelah transisi
+            }, 5000); // Notifikasi hilang setelah 5 detik
+        }
     });
     </script>
 

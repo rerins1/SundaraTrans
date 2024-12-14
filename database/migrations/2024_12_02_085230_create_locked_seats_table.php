@@ -13,8 +13,7 @@ class CreateLockedSeatsTable extends Migration
             $table->unsignedBigInteger('ticket_id'); // Harus numerik dan cocok dengan id di tabel tickets
             $table->string('seat_number');
             $table->timestamp('locked_until');
-            $table->timestamps();
-
+            $table->timestamp('expired_at')->nullable();
             $table->foreign('ticket_id')->references('id')->on('tickets')->onDelete('cascade');
         });
     }

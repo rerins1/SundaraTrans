@@ -41,7 +41,7 @@ class AuthController extends Controller
     }
 
     function showLogin() {
-        return view('components.navbar');
+        return view('components.Home');
     }
     
     public function submitLogin(Request $request)

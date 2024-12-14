@@ -36,7 +36,17 @@
                     </form>
                 </div>
 
-                <button class="bg-green-500 text-white px-4 py-2 rounded mb-4"><i class="fas fa-plus mr-2"></i>Tambah Booking</button>
+                @if(session('success'))
+                    <div class="bg-green-200 text-green-800 p-4 rounded mb-4">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="bg-red-200 text-red-800 p-4 rounded mb-4">
+                        {{ session('error') }}
+                    </div>
+                @endif
 
                 <table class="w-full bg-white rounded-lg overflow-hidden shadow-lg">
                     <thead>
@@ -51,6 +61,7 @@
                             <th class="py-3 px-4">Nama Penumpang</th>
                             <th class="py-3 px-4">Kursi</th>
                             <th class="py-3 px-4">Harga</th>
+                            <th class="py-3 px-4">Bukti Pembayaran</th>
                             <th class="py-3 px-4">Aksi</th>
                         </tr>
                     </thead>
@@ -77,6 +88,17 @@
                                 @endphp
                             </td>
                             <td class="py-3 px-4">Rp {{ number_format($booking->total_pembayaran, 0, ',', '.') }}</td>
+                            <td class="py-3 px-4">
+                                @if($booking->bukti_pembayaran)
+                                    <a href="{{ Storage::url($booking->bukti_pembayaran) }}" 
+                                        target="_blank" 
+                                        class="text-blue-500 hover:underline">
+                                        Lihat Bukti
+                                    </a>
+                                @else
+                                    <span class="text-gray-500">Tidak ada</span>
+                                @endif
+                            </td>
                             <td class="py-3 px-4 flex space-x-2">
                                 <!-- Tombol Edit -->
                                 <a href="{{ route('admin.bookings.edit', $booking->id) }}"
