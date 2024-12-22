@@ -13,7 +13,8 @@ class AdminBookingController extends Controller
     {
         $search = $request->query('search');
 
-        $bookings = Booking::with('ticket')
+        $bookings = Booking::with(['ticket'])
+            ->whereHas('ticket') // Hanya ambil booking yang memiliki tiket
             ->when($search, function ($query, $search) {
                 return $query->where('kode_booking', 'like', "%{$search}%")
                     ->orWhere('nama_pemesan', 'like', "%{$search}%")

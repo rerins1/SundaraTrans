@@ -72,9 +72,9 @@
                             <td class="py-3 px-4">{{ $booking->kode_booking }}</td>
                             <td class="py-3 px-4">{{ $booking->nama_pemesan }}</td>
                             <td class="py-3 px-4">{{ $booking->no_handphone }}</td>
-                            <td class="py-3 px-4">{{ $booking->ticket->tanggal }}</td>
-                            <td class="py-3 px-4">{{ $booking->ticket->dari }}</td>
-                            <td class="py-3 px-4">{{ $booking->ticket->tujuan }}</td>
+                            <td class="py-3 px-4">{{ $booking->ticket->tanggal ?? 'N/A' }}</td>
+                            <td class="py-3 px-4">{{ $booking->ticket->dari ?? 'N/A' }}</td>
+                            <td class="py-3 px-4">{{ $booking->ticket->tujuan ?? 'N/A' }}</td>
                             <td class="py-3 px-4">
                                 @php 
                                     $namaPenumpang = json_decode($booking->nama_penumpang);
