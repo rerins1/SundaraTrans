@@ -10,11 +10,18 @@ class CreateLockedSeatsTable extends Migration
     {
         Schema::create('locked_seats', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('ticket_id'); // Harus numerik dan cocok dengan id di tabel tickets
+            $table->unsignedBigInteger('ticket_id');
             $table->string('seat_number');
-            $table->timestamp('locked_until');
-            $table->timestamp('expired_at')->nullable();
-            $table->foreign('ticket_id')->references('id')->on('tickets')->onDelete('cascade');
+            $table->timestamp('locked_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
+            $table->timestamps();
+
+            $table->foreign('ticket_id')
+                ->references('id')
+                ->on('tickets')
+                ->onDelete('cascade');
+
+            $table->unique(['ticket_id', 'seat_number']);
         });
     }
 

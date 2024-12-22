@@ -5,8 +5,9 @@
         : 'cursor-pointer hover:bg-green-100';
     $tooltip = $isBooked 
         ? 'Kursi sudah dipesan' 
-        : ($isLocked ? 'Kursi sedang dipesan oleh pengguna lain' 
-        : 'Klik untuk memilih kursi');
+        : ($isLocked 
+            ? 'Kursi sedang dikunci oleh pengguna lain' 
+            : 'Klik untuk memilih kursi');
 @endphp
 
 <div class="seat-wrapper">
@@ -17,7 +18,8 @@
         class="hidden seat-checkbox"
         @if($isDisabled) disabled @endif>
     <label for="seat-{{ $seatNumber }}"
-        class="seat block w-8 h-8 md:w-12 md:h-12 border-2 rounded-lg flex items-center justify-center transition-colors duration-200 text-xs md:text-base {{ $seatClass }}"
+        class="seat block w-8 h-8 md:w-12 md:h-12 border-2 rounded-lg flex items-center justify-center transition-colors duration-200 text-xs md:text-base 
+        {{ $isDisabled ? 'bg-red-500 text-white cursor-not-allowed' : 'cursor-pointer hover:bg-green-100' }}"
         data-seat="{{ $seatNumber }}"
         title="{{ $tooltip }}"
         aria-label="Kursi {{ $seatNumber }} {{ $isDisabled ? 'tidak tersedia' : 'tersedia' }}">

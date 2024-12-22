@@ -8,7 +8,6 @@
     <title>Biodata Form - Sundara Trans</title>
 </head>
 <body>
-
     <x-navbar></x-navbar>
 
     <x-header>Isi Informasi Penumpang
@@ -17,30 +16,54 @@
 
     <div class="min-h-screen justify-center items-center py-32">
         <div class="w-full max-w-full px-6 py-4">
-            <form action="{{ route('store.biodata') }}" method="POST">
+            <form action="{{ route('store.biodata') }}" method="POST" id="biodataForm">
                 @csrf
                 <div class="md:flex md:space-x-6 space-y-6 md:space-y-0">
-                    
                     <!-- Informasi Penumpang -->
                     <div class="bg-white p-6 rounded w-full shadow-xl md:flex-1">
                         <div class="grid grid-cols-2 gap-4">
+                            <!-- Informasi Pemesan -->
                             <div>
                                 <label class="block">Nama Pemesan</label>
-                                <input name="nama_pemesan" type="text" class="w-full p-2 border rounded" placeholder="Masukkan Nama Pemesan" />
+                                <input name="nama_pemesan" type="text" class="w-full p-2 border rounded" required placeholder="Masukkan Nama Pemesan" />
+                                @error('nama_pemesan')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div>
                                 <label class="block">Email</label>
-                                <input name="email" type="email" class="w-full p-2 border rounded" placeholder="Masukkan Email" />
+                                <input name="email" type="email" class="w-full p-2 border rounded" required placeholder="Masukkan Email" />
                                 <small class="text-green-600">Email diperlukan untuk mengirim e-tiket, kode bayar & OTP</small>
+                                @error('email')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div>
                                 <label class="block">No Handphone</label>
-                                <input name="no_handphone" type="text" class="w-full p-2 border rounded" placeholder="Masukkan No Telepon" />
+                                <input name="no_handphone" type="text" class="w-full p-2 border rounded" required placeholder="Masukkan No Telepon" />
+                                @error('no_handphone')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div>
                                 <label class="block">Alamat</label>
-                                <input name="alamat" type="text" class="w-full p-2 border rounded" placeholder="Masukkan Alamat" />
-                            </div>                          
+                                <input name="alamat" type="text" class="w-full p-2 border rounded" required placeholder="Masukkan Alamat" />
+                                @error('alamat')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Container untuk input fields penumpang -->
+                            <div id="passenger-inputs-container" class="col-span-2 grid grid-cols-2 gap-4">
+                                <!-- Input fields penumpang akan ditambahkan secara dinamis di sini -->
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" id="sameAsBuyer" class="form-checkbox">
+                                    <span class="ml-2">Penumpang Adalah Pemesan</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -77,42 +100,118 @@
                                 <span>Rp {{ number_format($total_pembayaran, 0, ',', '.') }}</span>
                             </div>
                         </div>
+                        <!-- Hidden input untuk menyimpan jumlah penumpang -->
+                        <input type="hidden" name="jumlah_penumpang" id="jumlahPenumpang" value="{{ $jumlah_penumpang }}">
                     </div>
                 </div>
 
                 <!-- Tombol Navigasi -->
                 <div class="md:flex md:justify-between mt-6 flex-col md:flex-row space-y-4 md:space-y-0">
-                    <a href="javascript:void(0);" 
-                        id="sebelumnya-button" 
-                        class="bg-blue-500 text-white px-4 py-2 rounded-lg w-full md:w-auto text-center">
+                    <a href="javascript:void(0);" id="sebelumnya-button" class="bg-blue-500 text-white px-4 py-2 rounded-lg w-full md:w-auto text-center">
                         SEBELUMNYA
                     </a>
-                    <button 
-                        type="submit"
-                        class="bg-red-500 text-white px-4 py-2 rounded-lg w-full md:w-auto"
-                    >
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg w-full md:w-auto">
                         SELANJUTNYA 
                     </button>
                 </div>
             </form>
         </div>
-
     </div>
 
     <x-footer></x-footer>
 
-
-    <script src="{{ asset('js/biodata.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Handle tombol "SEBELUMNYA"
-            const sebelumnyaButton = document.getElementById('sebelumnya-button');
-            sebelumnyaButton.addEventListener('click', function (event) {
-                event.preventDefault(); // Mencegah validasi form dan pengiriman default
-                window.history.back(); // Arahkan ke halaman sebelumnya
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ambil jumlah penumpang dari input hidden
+            const jumlahPenumpang = parseInt(document.getElementById('jumlahPenumpang').value) || 1;
+            console.log('Jumlah Penumpang:', jumlahPenumpang); // Debug log
+            
+            const passengerContainer = document.getElementById('passenger-inputs-container');
+            const checkbox = document.getElementById('sameAsBuyer');
+            const namaPemesanInput = document.querySelector('input[name="nama_pemesan"]');
+            
+            // Fungsi untuk membuat input fields penumpang
+            function createPassengerInputs(count) {
+                console.log('Creating inputs for', count, 'passengers'); // Debug log
+                passengerContainer.innerHTML = ''; // Bersihkan container
+                
+                // Buat input untuk setiap penumpang
+                for (let i = 1; i <= count; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'mb-4';
+                    div.innerHTML = `
+                        <label class="block mb-2">Nama Penumpang ${i}</label>
+                        <input type="text" 
+                               name="nama_penumpang[]" 
+                               id="passenger-input-${i}"
+                               class="w-full p-2 border rounded" 
+                               required
+                               placeholder="Masukkan Nama Penumpang ${i}" />
+                        <span class="text-red-500 text-sm hidden" id="error-passenger-${i}"></span>
+                    `;
+                    passengerContainer.appendChild(div);
+                }
+            }
+
+            // Inisialisasi input fields penumpang
+            createPassengerInputs(jumlahPenumpang);
+
+            // Handler untuk checkbox "Penumpang Adalah Pemesan"
+            checkbox.addEventListener('change', function() {
+                const firstPassengerInput = document.getElementById('passenger-input-1');
+                if (this.checked && namaPemesanInput.value) {
+                    firstPassengerInput.value = namaPemesanInput.value;
+                    firstPassengerInput.readOnly = true;
+                } else {
+                    firstPassengerInput.readOnly = false;
+                    if (!this.checked) {
+                        firstPassengerInput.value = '';
+                    }
+                }
             });
+
+            // Update nama penumpang pertama saat nama pemesan berubah
+            namaPemesanInput.addEventListener('input', function() {
+                if (checkbox.checked) {
+                    const firstPassengerInput = document.getElementById('passenger-input-1');
+                    if (firstPassengerInput) {
+                        firstPassengerInput.value = this.value;
+                    }
+                }
+            });
+
+            // Form validation
+            document.getElementById('biodataForm').addEventListener('submit', function(e) {
+                let isValid = true;
+                const passengerInputs = document.querySelectorAll('[name="nama_penumpang[]"]');
+                
+                // Reset previous error messages
+                document.querySelectorAll('.text-red-500').forEach(el => el.classList.add('hidden'));
+                
+                // Validate each passenger input
+                passengerInputs.forEach((input, index) => {
+                    const errorSpan = document.getElementById(`error-passenger-${index + 1}`);
+                    if (!input.value.trim()) {
+                        isValid = false;
+                        errorSpan.textContent = `Nama Penumpang ${index + 1} harus diisi`;
+                        errorSpan.classList.remove('hidden');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+
+            // Handler untuk tombol "SEBELUMNYA"
+            document.getElementById('sebelumnya-button').addEventListener('click', function() {
+                window.history.back();
+            });
+
+            // Debug log untuk memastikan script berjalan
+            console.log('Biodata form script loaded successfully');
         });
     </script>
-    
 </body>
 </html>
+```

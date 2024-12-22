@@ -54,22 +54,34 @@
                                     <div class="font-medium">{{ $ticket->tujuan }}</div>
                                 </div>
                                 <div class="flex justify-between items-center mt-2">
-                                    <span class="text-sm text-green-600">Tersedia {{ $ticket->kursi }} kursi</span>
+                                    <span class="hidden md:block col-span-2 text-center">
+                                        @if($ticket->sisa_kursi > 0)
+                                            Tersedia {{ $ticket->sisa_kursi }} kursi
+                                        @else
+                                            <span class="text-red-500">Kursi Habis</span>
+                                        @endif
+                                    </span>
                                 </div>
                             </div>
-                    
+
                             {{-- Tampilan Desktop --}}
                             <span class="hidden md:block col-span-2 text-center">{{ $ticket->kelas }}</span>
                             <span class="hidden md:block col-span-2 text-center">{{ $ticket->kode }}</span>
                             <span class="hidden md:block col-span-1 text-center">{{ $ticket->waktu }}</span>
                             <span class="hidden md:block col-span-3 text-center">{{ $ticket->dari }} - {{ $ticket->tujuan }}</span>
-                            <span class="hidden md:block col-span-2 text-center">Tersedia {{ $ticket->kursi }} lagi</span>
+                            <span class="hidden md:block col-span-2 text-center">
+                                @if($ticket->sisa_kursi > 0)
+                                    Tersedia {{ $ticket->sisa_kursi }} kursi
+                                @else
+                                    <span class="text-red-500">Kursi Habis</span>
+                                @endif
+                            </span>
                             <span class="hidden md:block col-span-2 text-center">Rp {{ number_format($ticket->harga, 0, ',', '.') }}</span>
                         </li>
                         @empty
-                            <li class="flex justify-center p-4 border rounded-lg cursor-default">
-                                <p class="text-md font-semibold">{{ $message ?? 'Maaf, Tidak ada tiket tersedia.' }}</p>
-                            </li>
+                        <li class="flex justify-center p-4 border rounded-lg cursor-default">
+                            <p class="text-md font-semibold">{{ $message ?? 'Maaf, Tidak ada tiket tersedia.' }}</p>
+                        </li>
                         @endforelse
                     </ul>
                 </div>

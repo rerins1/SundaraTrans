@@ -39,7 +39,7 @@ class AdminBookingController extends Controller
             'email' => 'required|email',
             'no_handphone' => 'required|string',
             'alamat' => 'required|string',
-            'status' => 'required|in:pending,paid,cancelled',
+            'status' => 'required|in:menunggu,lunas,dibatalkan',
         ]);
 
         $booking = Booking::findOrFail($id);
@@ -61,7 +61,7 @@ class AdminBookingController extends Controller
     public function confirm($id)
     {
         $booking = Booking::findOrFail($id);
-        $booking->update(['status' => 'paid']);
+        $booking->update(['status' => 'lunas']);
 
         return redirect()->route('admin.bookings.index')->with('success', 'Pembayaran berhasil dikonfirmasi.');
     }

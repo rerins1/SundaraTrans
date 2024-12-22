@@ -58,17 +58,17 @@
                     </div>
                     <div>
                         <p><strong>Tujuan:</strong> {{ $ticket->tujuan }}</p>
-                        <p><strong>Total Bayar:</strong> Rp {{ number_format($ticket->harga, 0, ',', '.') }}</p>
+                        <p><strong>Total Bayar:</strong> Rp {{ number_format($total_pembayaran, 0, ',', '.') }}</p>
                         <p class="text-black font-bold">
                             <strong>Status:</strong> 
                             @switch($status)
-                                @case('paid')
+                                @case('lunas')
                                     <span class="text-green-600">Pembayaran Sukses</span>
                                     @break
-                                @case('pending')
+                                @case('menunggu')
                                     <span class="text-yellow-500">Menunggu Konfirmasi Admin</span>
                                     @break
-                                @case('cancelled')
+                                @case('dibatalkan')
                                     <span class="text-red-600">Dibatalkan</span>
                                     @break
                                 @default

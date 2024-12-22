@@ -23,15 +23,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div class="bg-green-500 text-white p-4 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-2">Total Pendapatan</h3>
-                        <p class="text-2xl">Rp 1.500.000</p>
+                        <p class="text-2xl">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
                     </div>
                     <div class="bg-blue-500 text-white p-4 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-2">Pendapatan Bulan Ini</h3>
-                        <p class="text-2xl">Rp 500.000</p>
+                        <p class="text-2xl">Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}</p>
                     </div>
                     <div class="bg-yellow-500 text-white p-4 rounded shadow-lg">
                         <h3 class="text-xl font-bold mb-2">Pendapatan Tahun Ini</h3>
-                        <p class="text-2xl">Rp 5.000.000</p>
+                        <p class="text-2xl">Rp {{ number_format($pendapatanTahunIni, 0, ',', '.') }}</p>
                     </div>
                 </div>
 
@@ -47,23 +47,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="border-b">
-                            <td class="py-3 px-4">TXN001</td>
-                            <td class="py-3 px-4">2024-11-01</td>
-                            <td class="py-3 px-4">Rp 500.000</td>
-                            <td class="py-3 px-4">Virtual Account</td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="py-3 px-4">TXN002</td>
-                            <td class="py-3 px-4">2024-11-10</td>
-                            <td class="py-3 px-4">Rp 1.000.000</td>
-                            <td class="py-3 px-4">E-Wallet</td>
-                        </tr>
-                        <!-- Add more rows as needed -->
+                        @foreach ($pendapatanDetail as $booking)
+                            <tr class="border-b">
+                                <td class="py-3 px-4">{{ $booking->kode_booking }}</td>
+                                <td class="py-3 px-4">{{ $booking->created_at->format('Y-m-d') }}</td>
+                                <td class="py-3 px-4">Rp {{ number_format($booking->total_pembayaran, 0, ',', '.') }}</td>
+                                <td class="py-3 px-4">{{ ucfirst($booking->status) }}</td>
+                            </tr>
+                        @endforeach
                     </tbody>
-                </table>
-
-                
+                </table>                
             </div>
         </main>
     </div>

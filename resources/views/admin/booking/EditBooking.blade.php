@@ -63,9 +63,9 @@
         <label for="status" class="block text-sm font-semibold">Status:</label>
         <select name="status" id="status" 
             class="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="pending" {{ old('status', $booking->status) === 'pending' ? 'selected' : '' }}>Pending</option>
-            <option value="paid" {{ old('status', $booking->status) === 'paid' ? 'selected' : '' }}>Paid</option>
-            <option value="cancelled" {{ old('status', $booking->status) === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+            <option value="menunggu" {{ old('status', $booking->status) === 'menunggu' ? 'selected' : '' }}>Menunggu</option>
+            <option value="lunas" {{ old('status', $booking->status) === 'lunas' ? 'selected' : '' }}>Lunas</option>
+            <option value="dibatalkan" {{ old('status', $booking->status) === 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
         </select>
         @error('status')
             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>

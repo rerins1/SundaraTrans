@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\BusTicketController;
 use App\Http\Controllers\AdminTicketController;
 use App\Http\Controllers\Admin\AdminBookingController;
+use App\Http\Controllers\ReportController;
 
 // Home route
 Route::get('/', function () {
@@ -32,8 +33,11 @@ Route::prefix('booking')->group(function () {
         ->name('show.kursi');
     Route::post('/seat', [BusTicketController::class, 'storeSeatSelection'])
         ->name('store.seat');
-    Route::post('/cancel-booking', [BusTicketController::class, 'cancelBooking'])->name('cancel.booking');
-    Route::get('/seat/reselect', [BusTicketController::class, 'reselectSeats'])->name('reselect.seats');
+    Route::get('/reselect-seats', [BusTicketController::class, 'reselectSeats'])
+        ->name('reselect.seats');
+    Route::get('/cancel-booking', [BusTicketController::class, 'cancelBooking'])
+        ->name('cancel.booking');
+    Route::get('/api/unavailable-seats', [BusTicketController::class, 'getUnavailableSeats'])->name('api.getUnavailableSeats');
 
     // Step 4: Payment
     Route::prefix('payment')->group(function () {
@@ -58,6 +62,8 @@ Route::prefix('booking')->group(function () {
 });
 
 Route::post('/cek-tiket', [BusTicketController::class, 'cekTiket'])->name('cek.tiket');
+
+Route::get('/laporan-pendapatan', [ReportController::class, 'laporanPendapatan'])->name('laporan.pendapatan');
 
 Route::get('/Tiket', function () {
     return view('transaksi.Tiket');

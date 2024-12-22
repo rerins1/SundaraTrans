@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\ClearExpiredLockedSeats::class,
+        Commands\CleanupExpiredTickets::class,
     ];
     
     protected function schedule(Schedule $schedule)
@@ -21,9 +22,16 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('seats:release-daily')->dailyAt('00:00');
 
+       // Jalankan reset kursi setiap hari jam 00:00
+        $schedule->command('bus:reset-seats')->dailyAt('00:00');
+        
+        // Bersihkan locked seats yang expired setiap 5 menit
         $schedule->call(function () {
-            LockedSeat::where('expired_at', '<', now())->delete();
-        })->everyMinute();
+            LockedSeat::cleanExpiredLocks();
+        })->everyFiveMinutes();
+
+        // Jalankan setiap menit untuk pengecekan real-time
+        $schedule->command('tickets:cleanup')->everyMinute();
     }
     /**
      * Register the commands for the application.

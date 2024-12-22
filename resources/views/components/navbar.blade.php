@@ -187,16 +187,32 @@
                         <label for="email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email</label>
                     </div>
                     <div class="relative z-0 w-full mb-5 group">
-                        <input type="password" name="password" id="password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                        <label for="password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
+                        <div class="relative">
+                            <input type="password" name="password" id="register-password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                            <button type="button" onclick="toggleRegisterPassword('register-password', 'register-password-eye')" class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <svg id="register-password-eye" class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path d="M12 4.5C7.305 4.5 3.25 8 2 12c1.25 4 5.305 7.5 10 7.5s8.75-3.5 10-7.5c-1.25-4-5.305-7.5-10-7.5z" />
+                                    <path d="M12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <label for="register-password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
                     </div>
                     <div class="relative z-0 w-full mb-5 group">
-                        <input type="password" name="password_confirmation" id="password_confirmation" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                        <label for="password_confirmation" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Konfirmasi Password</label>
+                        <div class="relative">
+                            <input type="password" name="password_confirmation" id="register-password-confirmation" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                            <button type="button" onclick="toggleRegisterPassword('register-password-confirmation', 'register-password-confirmation-eye')" class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <svg id="register-password-confirmation-eye" class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path d="M12 4.5C7.305 4.5 3.25 8 2 12c1.25 4 5.305 7.5 10 7.5s8.75-3.5 10-7.5c-1.25-4-5.305-7.5-10-7.5z" />
+                                    <path d="M12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <label for="register-password-confirmation" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Konfirmasi Password</label>
                     </div>
                     <div class="relative z-0 w-full mb-5 group">
-                        <input type="tel" pattern="^\+62[0-9]{8,12}$" name="phone" id="phone" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-                        <label for="phone" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nomor Handphone (+6281-1234-5678)</label>
+                        <input type="tel" pattern="^08[0-9]{8,11}$" name="phone" id="phone" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                        <label for="phone" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nomor Handphone (081-234-567-890)</label>
                     </div>
                     <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">DAFTAR</button>
             </div>
@@ -244,6 +260,22 @@
             }
         };
 
+        function toggleRegisterPassword(inputId, eyeIconId) {
+            const passwordInput = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(eyeIconId);
+            const isPassword = passwordInput.type === 'password';
+
+            passwordInput.type = isPassword ? 'text' : 'password';
+
+            // Toggle eye icon
+            eyeIcon.setAttribute(
+                'd',
+                isPassword
+                    ? 'M12 4.5C7.305 4.5 3.25 8 2 12c1.25 4 5.305 7.5 10 7.5s8.75-3.5 10-7.5c-1.25-4-5.305-7.5-10-7.5z M12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z'
+                    : 'M12 4.5c4.695 0 8.75 3.5 10 7.5-1.25 4-5.305 7.5-10 7.5S3.25 16 2 12c1.25-4 5.305-7.5 10-7.5zm0 2.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z'
+            );
+        }
+
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');
@@ -255,8 +287,8 @@
             eyeIcon.setAttribute(
                 'd',
                 isPassword
-                    ? 'M12 4.5C7.305 4.5 3.25 8 2 12c1.25 4 5.305 7.5 10 7.5s8.75-3.5 10-7.5c-1.25-4-5.305-7.5-10-7.5z M12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z'
-                    : 'M12 4.5c4.695 0 8.75 3.5 10 7.5-1.25 4-5.305 7.5-10 7.5S3.25 16 2 12c1.25-4 5.305-7.5 10-7.5zm0 2.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z'
+                    ? 'M3.98 8.223A10.255 10.255 0 0012 4.5c4.756 0 8.873 3.555 10.02 8.223a1 1 0 010 .554c-1.147 4.668-5.264 8.223-10.02 8.223-4.756 0-8.873-3.555-10.02-8.223a1 1 0 010-.554A10.255 10.255 0 003.98 8.223zm7.02 1.777a2 2 0 11-4 0 2 2 0 014 0z'
+                    : 'M2.038 6.962a.75.75 0 111.06-1.06l8.94 8.939a.75.75 0 11-1.061 1.06l-8.94-8.939zm13.424.011a.75.75 0 10-1.061 1.06l8.94 8.94a.75.75 0 101.06-1.061l-8.94-8.94zM5.904 9.134a.75.75 0 10-1.498.15l.324 3.2a.75.75 0 101.498-.15l-.324-3.2z M18.246 10.136a.75.75 0 10-1.486-.192l-.257 2a.75.75 0 101.486.192l.257-2z M2 4.75l.004.09A.75.75 0 003.5 4.5v-1a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-1.5 1.907v1.171a3.5 3.5 0 001.5-2.878v-8A3.5 3.5 0 0017.5.5h-12A3.5 3.5 0 002 4v.75zm6.5 9a2 2 0 114 0 2 2 0 01-4 0z'
             );
         }
     </script>

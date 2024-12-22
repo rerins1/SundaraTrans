@@ -2,27 +2,54 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 
 class LockedSeat extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'ticket_id', 
+        'seat_number', 
+        'locked_at', 
+        'expires_at',
+    ];
 
-    protected $fillable = ['ticket_id', 'seat_number', 'user_id', 'locked_until'];
+    protected $dates = [
+        'locked_at', 
+        'expires_at',
+    ];
 
-    protected static function boot()
+    // Scope untuk hanya menampilkan kunci yang masih aktif
+    public function scopeActive($query)
     {
-        parent::boot();
-
-        // Hapus otomatis kursi terkunci yang telah expired
-        static::addGlobalScope('removeExpired', function ($query) {
-            $query->where('expired_at', '>', now());
-        });
+        return $query->where('expires_at', '>', now());
     }
 
+    // Relasi dengan tiket
     public function ticket()
     {
         return $this->belongsTo(Ticket::class);
+    }
+
+    // Method untuk membersihkan kunci yang sudah kedaluwarsa
+    public static function cleanExpiredLocks()
+    {
+        $deletedCount = self::where('expires_at', '<=', now())->delete();
+        Log::info('Expired locks cleaned', ['deleted_count' => $deletedCount]);
+    }
+
+    // Method untuk merilis kursi
+    public static function releaseSeats($ticketId, $seats = null)
+    {
+        $query = self::where('ticket_id', $ticketId);
+        
+        if ($seats !== null) {
+            $query->whereIn('seat_number', $seats);
+        }
+        
+        $query->delete();
+
+        return self::where('ticket_id', $ticketId)->delete();
     }
 }

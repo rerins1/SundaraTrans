@@ -22,7 +22,7 @@
         <a href="/admin/data-bus" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-bus mr-2"></i> Data Bus</a>
         <a href="/admin/users" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-users mr-2"></i> Data Penumpang</a>
         <a href="/admin/drivers" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-users mr-2"></i> Data Supir</a>
-        <a href="/laporanpendapatan" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-chart-line mr-2"></i> Laporan Pendapatan</a>
+        <a href="/laporan-pendapatan" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-chart-line mr-2"></i> Laporan Pendapatan</a>
         <a href="/backupdata" class="block py-2 px-4 hover:bg-gray-700"><i class="fas fa-database mr-2"></i> Backup Data</a>
     </nav>
 </aside>

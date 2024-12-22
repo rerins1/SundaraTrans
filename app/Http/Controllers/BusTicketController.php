@@ -16,38 +16,56 @@ class BusTicketController extends Controller
 {
     public function search(Request $request)
     {
+        // Validasi input pencarian
         $request->validate([
             'dari' => 'required|string',
             'tujuan' => 'required|string',
             'tanggal' => 'required|date',
             'jumlah_penumpang' => 'required|integer|min:1',
         ]);
-        
+
         $tanggal = date('Y-m-d', strtotime($request->input('tanggal')));
+        
+        // Simpan tanggal ke session untuk digunakan nanti
+        session(['tanggal' => $tanggal]);
         
         Log::info('Search Parameters:', [
             'dari' => $request->input('dari'),
             'tujuan' => $request->input('tujuan'),
             'tanggal' => $tanggal,
-            'jumlah_penumpang' => $request->input('jumlah_penumpang')
+            'jumlah_penumpang' => $request->input('jumlah_penumpang'),
         ]);
 
         $tickets = Ticket::where('dari', 'LIKE', '%' . $request->input('dari') . '%')
             ->where('tujuan', 'LIKE', '%' . $request->input('tujuan') . '%')
             ->whereDate('tanggal', $tanggal)
-            ->where('kursi', '>=', $request->input('jumlah_penumpang'))
-            ->get();
-            
+            ->where('kursi', '>', 0)
+            ->get()
+            ->map(function ($ticket) {
+                // Hitung jumlah kursi yang telah terpesan
+                $bookedSeats = Booking::where('ticket_id', $ticket->id)
+                    ->where('status', 'lunas')
+                    ->get()
+                    ->sum(function ($booking) {
+                        return count(json_decode($booking->kursi, true) ?? []);
+                    });
+
+                // Hitung kursi yang tersisa
+                $ticket->sisa_kursi = max(0, $ticket->kursi - $bookedSeats);
+
+                return $ticket;
+            });
+
         Log::info('Query Results:', ['count' => $tickets->count()]);
 
         if ($tickets->isEmpty()) {
             return view('reservasi.pilih-tiket', [
                 'tickets' => $tickets,
-                'message' => 'Tidak ada tiket tersedia untuk rute ini.'
+                'message' => 'Tidak ada tiket tersedia untuk rute ini.',
             ]);
         }
 
-        // Simpan jumlah penumpang ke session untuk digunakan di halaman biodata
+        // Simpan jumlah penumpang ke session untuk digunakan di halaman berikutnya
         session(['jumlah_penumpang' => $request->input('jumlah_penumpang')]);
 
         return view('reservasi.pilih-tiket', compact('tickets'));
@@ -75,21 +93,40 @@ class BusTicketController extends Controller
                 }
             }
 
-            // Ambil data tiket berdasarkan kode
-            $ticket = Ticket::where('kode', $kode)->firstOrFail();
+            // Ambil tanggal dari session yang disimpan saat pencarian
+            $tanggal = session('tanggal');
+
+            // Ambil data tiket berdasarkan kode DAN tanggal
+            $ticket = Ticket::where('kode', $kode)
+                ->whereDate('tanggal', $tanggal) // Tambahkan filter berdasarkan tanggal
+                ->firstOrFail();
             
-            // Simpan kode ke session untuk digunakan di halaman lain
-            session(['kode_tiket' => $kode]);
+            // Simpan kode dan tanggal ke session untuk digunakan di halaman lain
+            session([
+                'kode_tiket' => $kode,
+                'tanggal' => $tanggal
+            ]);
             
-            // Ambil jumlah penumpang dari session atau set default 1
-            $jumlah_penumpang = session('jumlah_penumpang', 1);
+            // Pastikan jumlah_penumpang ada dan valid
+            $jumlah_penumpang = session('jumlah_penumpang');
+            if (!$jumlah_penumpang || $jumlah_penumpang < 1) {
+                $jumlah_penumpang = 1; // Default value
+            }
 
             // Hitung total pembayaran
             $total_pembayaran = $ticket->harga * $jumlah_penumpang;
 
+            // Log untuk debugging
+            Log::info('Showing biodata form', [
+                'ticket_code' => $kode,
+                'ticket_date' => $tanggal,
+                'passenger_count' => $jumlah_penumpang
+            ]);
+
             return view('reservasi.isi-biodata', compact('ticket', 'jumlah_penumpang', 'total_pembayaran'));
             
         } catch (\Exception $e) {
+            Log::error('Error in showBiodata: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan saat memuat data tiket');
         }
@@ -97,34 +134,32 @@ class BusTicketController extends Controller
 
     public function storeBiodata(Request $request)
     {
+        $jumlah_penumpang = session('jumlah_penumpang', 1);
+        
         $request->validate([
             'nama_pemesan' => 'required|string',
             'email' => 'required|email',
             'no_handphone' => 'required|string',
             'alamat' => 'required|string',
-            'nama_penumpang' => 'required|array', // Ubah menjadi array
-            'nama_penumpang.*' => 'required|string', // Validasi setiap elemen array
+            'nama_penumpang' => 'required|array|size:' . $jumlah_penumpang,
+            'nama_penumpang.*' => 'required|string',
+        ], [
+            'nama_penumpang.size' => 'Jumlah nama penumpang harus sesuai dengan jumlah penumpang yang dipilih (' . $jumlah_penumpang . ')',
+            'nama_penumpang.*.required' => 'Nama penumpang harus diisi',
         ]);
 
-        // Mengambil dan memproses array nama penumpang
-        $namaPenumpang = $request->input('nama_penumpang');
-        
-        // Simpan data biodata ke session
+        // Simpan data ke session
         session([
             'nama_pemesan' => $request->input('nama_pemesan'),
             'email' => $request->input('email'),
             'no_handphone' => $request->input('no_handphone'),
             'alamat' => $request->input('alamat'),
-            'nama_penumpang' => $namaPenumpang, // Simpan array nama penumpang
+            'nama_penumpang' => $request->input('nama_penumpang'),
         ]);
 
-        // Log semua data termasuk array nama penumpang
-        Log::info('Data biodata yang disimpan ke session:', [
-            'nama_pemesan' => $request->input('nama_pemesan'),
-            'email' => $request->input('email'),
-            'no_handphone' => $request->input('no_handphone'),
-            'alamat' => $request->input('alamat'),
-            'nama_penumpang' => $namaPenumpang,
+        Log::info('Biodata stored', [
+            'passenger_count' => count($request->input('nama_penumpang')),
+            'passengers' => $request->input('nama_penumpang')
         ]);
 
         return redirect()->route('show.kursi');
@@ -133,97 +168,152 @@ class BusTicketController extends Controller
     public function showKursi()
     {
         try {
-            // Ambil jumlah penumpang dari session
+            // Ambil jumlah penumpang dan kode tiket dari sesi
             $jumlah_penumpang = session('jumlah_penumpang');
+            $kodeTiket = session('kode_tiket');
+            $tanggal = session('tanggal'); // Pastikan tanggal disimpan di session
             
-            // Validasi apakah jumlah penumpang ada
-            if (!$jumlah_penumpang) {
-                // Ganti redirect ke halaman yang menerima GET
+            if (!$jumlah_penumpang || !$kodeTiket) {
                 return redirect()->route('search.bus.tickets')
-                    ->with('error', 'Silahkan pilih jumlah penumpang terlebih dahulu');
+                    ->with('error', 'Silahkan pilih jumlah penumpang dan tiket terlebih dahulu.');
             }
 
-            // Ambil data kursi yang sudah terpesan (jika ada)
-            $bookedSeats = []; // Anda bisa mengisi ini dari database jika diperlukan
-            
+            // Ambil data tiket berdasarkan kode tiket DAN tanggal
+            $ticket = Ticket::where('kode', $kodeTiket)
+                ->whereDate('tanggal', $tanggal)
+                ->firstOrFail();
+
+            // Ambil kursi yang terkunci berdasarkan ticket_id
+            $lockedSeats = LockedSeat::where('ticket_id', $ticket->id)
+                ->where('expires_at', '>', now())
+                ->pluck('seat_number')
+                ->toArray();
+
+            // Ambil kursi yang sudah dipesan
+            $bookedSeats = Booking::where('ticket_id', $ticket->id)
+                ->get()
+                ->flatMap(function ($booking) {
+                    return json_decode($booking->kursi, true);
+                })
+                ->toArray();
+
+            // Gabungkan kursi yang terkunci dan yang dipesan
+            $unavailableSeats = array_unique(array_merge($lockedSeats, $bookedSeats));
+
             return view('reservasi.kursi', [
                 'jumlah_penumpang' => $jumlah_penumpang,
-                'bookedSeats' => $bookedSeats
+                'unavailableSeats' => $unavailableSeats,
+                'ticket' => $ticket // Tambahkan ticket ke view
             ]);
 
         } catch (\Exception $e) {
             Log::error('Error in showKursi: ' . $e->getMessage());
-            // Ganti redirect ke halaman yang menerima GET
             return redirect()->route('search.bus.tickets')
-                ->with('error', 'Terjadi kesalahan saat memuat halaman pemilihan kursi');
+                ->with('error', 'Terjadi kesalahan saat memuat halaman pemilihan kursi.');
         }
     }
 
     public function storeSeatSelection(Request $request)
     {
+        // Validasi input kursi
+        $request->validate([
+            'nomor_kursi' => 'required|array',
+            'nomor_kursi.*' => 'required|integer|min:1|max:31',
+        ]);
+
+        // Ambil jumlah penumpang dari sesi
+        $jumlah_penumpang = session('jumlah_penumpang');
+        $selectedSeats = $request->nomor_kursi;
+        $tanggal = session('tanggal');
+
+        // Validasi jumlah kursi
+        if (count($selectedSeats) != $jumlah_penumpang) {
+            return back()
+                ->with('error', 'Jumlah kursi yang dipilih harus sesuai dengan jumlah penumpang.')
+                ->withInput();
+        }
+
+        // Ambil data tiket berdasarkan kode DAN tanggal
+        $ticket = Ticket::where('kode', session('kode_tiket'))
+            ->whereDate('tanggal', $tanggal)
+            ->firstOrFail();
+
+        // Gabungkan tanggal dan waktu keberangkatan
+        $departureDateTime = Carbon::parse($ticket->tanggal . ' ' . $ticket->waktu);
+
+        // Set expire 10 menit setelah waktu keberangkatan
+        $expiresAt = $departureDateTime->copy()->addMinutes(10);
+
+        // Validasi waktu keberangkatan
+        if (now()->greaterThan($expiresAt)) {
+            return back()
+                ->with('error', 'Waktu pemesanan sudah melewati jadwal keberangkatan.')
+                ->withInput();
+        }
+
+        // Mulai transaksi database
+        DB::beginTransaction();
+
         try {
-            // Validasi input jumlah kursi yang dipilih
-            $request->validate([
-                'nomor_kursi' => 'required|array',
-                'nomor_kursi.*' => 'required|integer|min:1|max:31',
-            ]);
+            // Validasi kursi secara real-time
+            foreach ($selectedSeats as $seat) {
+                // Periksa apakah kursi sudah terkunci atau dipesan untuk tiket spesifik ini
+                $isLocked = LockedSeat::where('ticket_id', $ticket->id)
+                    ->where('seat_number', $seat)
+                    ->where('expires_at', '>', now())
+                    ->exists();
 
-            // Ambil jumlah penumpang dari session
-            $jumlah_penumpang = session('jumlah_penumpang');
-            $selectedSeats = $request->nomor_kursi;
+                $isBooked = Booking::where('ticket_id', $ticket->id)
+                    ->whereJsonContains('kursi', $seat)
+                    ->exists();
 
-            // Validasi jumlah kursi yang dipilih harus sesuai jumlah penumpang
-            if (count($selectedSeats) != $jumlah_penumpang) {
-                return back()->with('error', 'Jumlah kursi yang dipilih harus sesuai dengan jumlah penumpang.');
+                if ($isLocked || $isBooked) {
+                    DB::rollBack();
+                    return back()
+                        ->with('error', "Kursi nomor {$seat} sudah dipilih oleh pengguna lain. Silakan pilih kursi lain.")
+                        ->withInput();
+                }
             }
 
-            // Validasi kursi yang dipilih (menggunakan database transaction untuk konsistensi)
-            DB::transaction(function () use ($selectedSeats) {
-                foreach ($selectedSeats as $seat) {
-                    // Periksa apakah kursi sedang terkunci oleh pengguna lain
-                    $isLocked = LockedSeat::where('ticket_id', session('kode_tiket'))
-                        ->where('seat_number', $seat)
-                        ->where('expired_at', '>', now())
-                        ->exists();
+            // Proses penguncian kursi dengan ticket_id yang benar
+            foreach ($selectedSeats as $seat) {
+                LockedSeat::create([
+                    'ticket_id' => $ticket->id, // Gunakan ID tiket yang spesifik
+                    'seat_number' => $seat,
+                    'locked_at' => now(),
+                    'expires_at' => $expiresAt
+                ]);
+            }
 
-                    if ($isLocked) {
-                        throw new \Exception("Kursi nomor {$seat} sedang dipesan oleh pengguna lain.");
-                    }
+            // Simpan kursi yang dipilih ke sesi
+            session(['selected_seats' => $selectedSeats]);
 
-                    // Kunci ulang kursi baru untuk pengguna ini
-                    LockedSeat::updateOrCreate(
-                        [
-                            'ticket_id' => session('kode_tiket'),
-                            'seat_number' => $seat,
-                        ],
-                        [
-                            'locked_until' => now()->addMinutes(5),
-                            'expired_at' => now()->addMinutes(5),
-                        ]
-                    );
-                }
-
-                // Simpan kursi baru yang dipilih ke session
-                session(['selected_seats' => $selectedSeats]);
-            });
-
-            // Redirect ke halaman pembayaran
+            DB::commit();
             return redirect()->route('show.pembayaran');
+
         } catch (\Exception $e) {
-            // Log error jika ada
-            Log::error('Error in storeSeatSelection: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan saat menyimpan pilihan kursi: ' . $e->getMessage());
+            DB::rollBack();
+            Log::error('Seat selection error: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat memilih kursi.');
         }
     }
 
+    public function cleanupExpiredLocks()
+    {
+        LockedSeat::where('expires_at', '<=', now())->delete();
+    }
 
     public function leaveSeatPage()
     {
         $selectedSeats = session('selected_seats', []);
+        $ticketId = session('kode_tiket');
+
         if (!empty($selectedSeats)) {
-            LockedSeat::whereIn('seat_number', $selectedSeats)
-                ->where('ticket_id', session('kode_tiket'))
-                ->delete();
+            // Release all locked seats
+            foreach ($selectedSeats as $seat) {
+                LockedSeat::releaseSeat($ticketId, $seat);
+            }
+            
             session()->forget('selected_seats');
         }
 
@@ -232,42 +322,88 @@ class BusTicketController extends Controller
 
     public function reselectSeats()
     {
-        try {
-            // Ambil ID tiket dari session
-            $ticketId = session('kode_tiket');
+        $ticketId = Ticket::where('kode', session('kode_tiket'))->value('id');
+        $selectedSeats = session('selected_seats', []);
 
-            // Ambil kursi yang sebelumnya dipilih dari session
-            $selectedSeats = session('selected_seats', []);
-
-            // Hapus kunci dari kursi yang sebelumnya dipilih
-            if (!empty($selectedSeats)) {
-                LockedSeat::where('ticket_id', $ticketId)
-                    ->whereIn('seat_number', $selectedSeats)
-                    ->delete();
-
-                // Hapus kursi yang dipilih dari session
-                session()->forget('selected_seats');
-            }
-
-            // Redirect kembali ke halaman pemilihan kursi
-            return redirect()->route('show.kursi');
-        } catch (\Exception $e) {
-            Log::error('Error in reselectSeats: ' . $e->getMessage());
-            return redirect()->route('home')->with('error', 'Terjadi kesalahan saat mengatur ulang kursi.');
+        // Lepaskan kursi yang dipilih sebelumnya
+        if (!empty($selectedSeats)) {
+            LockedSeat::releaseSeats($ticketId, $selectedSeats);
+            session()->forget('selected_seats');
         }
+
+        return redirect()->route('show.kursi');
     }
 
     public function cancelBooking()
     {
-        $selectedSeats = session('selected_seats', []);
-        if (!empty($selectedSeats)) {
-            LockedSeat::whereIn('seat_number', $selectedSeats)->delete();
-            session()->forget(['selected_seats', 'kode_tiket']);
+        // Ambil data tiket dari session
+        $kodeTiket = session('kode_tiket');
+        
+        // Jika tidak ada kode tiket, redirect ke halaman utama
+        if (!$kodeTiket) {
+            return redirect()->route('home');
         }
 
-        return redirect()->route('home');
-    }
+        try {
+            // Cari tiket berdasarkan kode
+            $ticket = Ticket::where('kode', $kodeTiket)->first();
+            
+            if (!$ticket) {
+                return redirect()->route('home')
+                    ->with('error', 'Tiket tidak ditemukan.');
+            }
 
+            // Mulai transaksi database
+            DB::beginTransaction();
+
+            // 1. Hapus kursi yang terkunci
+            LockedSeat::where('ticket_id', $ticket->id)->delete();
+
+            // 2. Hapus booking yang belum selesai (jika ada)
+            Booking::where('ticket_id', $ticket->id)
+                ->where('status', 'menunggu')
+                ->delete();
+
+            // 3. Batalkan semua sesi terkait
+            session()->forget([
+                'kode_tiket',
+                'selected_seats',
+                'jumlah_penumpang',
+                'nama_pemesan',
+                'email',
+                'no_handphone',
+                'alamat',
+                'nama_penumpang'
+            ]);
+
+            // Commit transaksi
+            DB::commit();
+
+            // Log pembatalan
+            Log::info('Booking cancellation complete', [
+                'ticket_code' => $kodeTiket,
+                'ticket_id' => $ticket->id
+            ]);
+
+            // Redirect dengan pesan sukses
+            return redirect()->route('home')
+                ->with('status', 'Pemesanan berhasil dibatalkan. Terima kasih.');
+
+        } catch (\Exception $e) {
+            // Rollback transaksi jika terjadi kesalahan
+            DB::rollBack();
+
+            // Log error
+            Log::error('Booking cancellation failed', [
+                'error' => $e->getMessage(),
+                'ticket_code' => $kodeTiket
+            ]);
+
+            // Redirect dengan pesan error
+            return redirect()->route('home')
+                ->with('error', 'Terjadi kesalahan saat membatalkan pemesanan.');
+        }
+    }
 
     public function showPembayaran()
     {
@@ -277,10 +413,15 @@ class BusTicketController extends Controller
         $email = session('email');
         $no_handphone = session('no_handphone');
         $alamat = session('alamat');
-        $nama_penumpang = session('nama_penumpang', []); // Tambahkan default empty array
+        $nama_penumpang = session('nama_penumpang', []); 
         $selected_seats = session('selected_seats', []);
+        $tanggal = session('tanggal'); // Ambil tanggal dari session
         
-        $ticket = Ticket::where('kode', session('kode_tiket'))->firstOrFail();
+        // Ambil data tiket berdasarkan kode DAN tanggal
+        $ticket = Ticket::where('kode', session('kode_tiket'))
+            ->whereDate('tanggal', $tanggal)
+            ->firstOrFail();
+
         $jumlah_penumpang = session('jumlah_penumpang', 1);
         $total_pembayaran = $ticket->harga * $jumlah_penumpang;
 
@@ -295,111 +436,83 @@ class BusTicketController extends Controller
         $request->validate([
             'bank' => 'required|string',
             'payment_code' => 'required|string',
-            'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Validasi upload gambar
+            'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ], [
-            'bukti_pembayaran.required' => 'Silakan unggah bukti pembayaran.',
+            'bukti_pembayaran.required' => 'Silahkan unggah bukti pembayaran.',
             'bukti_pembayaran.image' => 'File harus berupa gambar.',
             'bukti_pembayaran.mimes' => 'Format gambar harus jpeg, png, atau jpg.',
             'bukti_pembayaran.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
-        try {
-            // Ambil data dari session
-            $nama_pemesan = session('nama_pemesan');
-            $email = session('email');
-            $no_handphone = session('no_handphone');
-            $alamat = session('alamat');
-            $nama_penumpang = session('nama_penumpang', []);
-            $selected_seats = session('selected_seats', []);
-            $kode_tiket = session('kode_tiket');
-            $jumlah_penumpang = session('jumlah_penumpang', 1);
+        // Ambil data dari session
+        $nama_pemesan = session('nama_pemesan');
+        $email = session('email');
+        $no_handphone = session('no_handphone');
+        $alamat = session('alamat');
+        $nama_penumpang = session('nama_penumpang', []);
+        $selected_seats = session('selected_seats', []);
+        $tanggal = session('tanggal'); // Ambil tanggal dari session
 
-            if (!$selected_seats || !$kode_tiket) {
-                return redirect()->route('show.kursi')->with('error', 'Data kursi atau tiket tidak valid.');
-            }
+        // Ambil data tiket berdasarkan kode DAN tanggal
+        $ticket = Ticket::where('kode', session('kode_tiket'))
+            ->whereDate('tanggal', $tanggal)
+            ->firstOrFail();
 
-            // Validasi kursi yang dipilih masih terkunci
-            $lockedSeats = LockedSeat::where('ticket_id', $kode_tiket)
-                ->whereIn('seat_number', $selected_seats)
-                ->where('expired_at', '>', now())
-                ->pluck('seat_number')
-                ->toArray();
+        $jumlah_penumpang = session('jumlah_penumpang', 1);
+        $total_pembayaran = $ticket->harga * $jumlah_penumpang;
 
-            if (count($lockedSeats) !== count($selected_seats)) {
-                return redirect()->route('show.kursi')
-                    ->with('error', 'Salah satu kursi Anda telah dipilih oleh pengguna lain.');
-            }
+        // Generate kode booking unik
+        $kode_booking = 'SDT' . strtoupper(uniqid());
 
-            // Ambil data tiket
-            $ticket = Ticket::where('kode', $kode_tiket)->firstOrFail();
-            $total_pembayaran = $ticket->harga * $jumlah_penumpang;
-
-            // Generate kode booking unik
-            $kode_booking = 'SDT' . strtoupper(uniqid());
-
-            // Proses upload bukti pembayaran
-            if ($request->hasFile('bukti_pembayaran')) {
-                $file = $request->file('bukti_pembayaran');
-                $fileName = $kode_booking . '_bukti_pembayaran.' . $file->getClientOriginalExtension();
-                $filePath = $file->storeAs('bukti_pembayaran', $fileName, 'public');
-            }
-
-            // Generate barcode
-            $generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
-            $barcode = base64_encode($generator->getBarcode($kode_booking, $generator::TYPE_CODE_128));
-
-            // Simpan data ke tabel bookings
-            $booking = Booking::create([
-                'kode_booking' => $kode_booking,
-                'nama_pemesan' => $nama_pemesan,
-                'email' => $email,
-                'no_handphone' => $no_handphone,
-                'alamat' => $alamat,
-                'nama_penumpang' => json_encode($nama_penumpang),
-                'kursi' => json_encode($selected_seats),
-                'ticket_id' => $ticket->id,
-                'jumlah_penumpang' => $jumlah_penumpang,
-                'total_pembayaran' => $total_pembayaran,
-                'status' => 'pending',
-                'bukti_pembayaran' => $filePath ?? null,
-            ]);
-
-            // Lepaskan kunci kursi setelah pembayaran berhasil
-            LockedSeat::where('ticket_id', $ticket->id)
-                ->whereIn('seat_number', $selected_seats)
-                ->delete();
-
-            // Log pembayaran berhasil
-            Log::info('Pembayaran berhasil disimpan dengan status pending:', [
-                'kode_booking' => $kode_booking,
-                'bank' => $request->input('bank'),
-                'payment_code' => $request->input('payment_code'),
-                'bukti_pembayaran' => $filePath ?? 'Tidak ada',
-            ]);
-
-            // Set session sukses dengan kode booking
-            session(['success' => $kode_booking]);
-
-            // Kirim data tiket ke halaman Tiket
-            return view('transaksi.Tiket', [
-                'ticket' => $ticket,
-                'nama_pemesan' => $nama_pemesan,
-                'email' => $email,
-                'no_handphone' => $no_handphone,
-                'alamat' => $alamat,
-                'nama_penumpang' => $nama_penumpang,
-                'selected_seats' => $selected_seats,
-                'total_pembayaran' => $total_pembayaran,
-                'barcode' => $barcode,
-                'status' => 'pending'
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Error in storePayment: ' . $e->getMessage());
-            return redirect()->route('show.pembayaran')->with('error', 'Terjadi kesalahan saat memproses pembayaran.');
+        // Proses upload bukti pembayaran
+        if ($request->hasFile('bukti_pembayaran')) {
+            $file = $request->file('bukti_pembayaran');
+            $fileName = $kode_booking . '_bukti_pembayaran.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('bukti_pembayaran', $fileName, 'public');
         }
-    }
 
+        $generator = new BarcodeGeneratorPNG();
+        $barcode = base64_encode($generator->getBarcode($kode_booking, $generator::TYPE_CODE_128));
+
+        // Simpan data ke tabel bookings dengan status "pending"
+        $booking = Booking::create([
+            'kode_booking' => $kode_booking,
+            'nama_pemesan' => $nama_pemesan,
+            'email' => $email,
+            'no_handphone' => $no_handphone,
+            'alamat' => $alamat,
+            'nama_penumpang' => json_encode($nama_penumpang),
+            'kursi' => json_encode($selected_seats),
+            'ticket_id' => $ticket->id,
+            'jumlah_penumpang' => $jumlah_penumpang,
+            'total_pembayaran' => $total_pembayaran,
+            'status' => 'menunggu',
+            'bukti_pembayaran' => $filePath ?? null,
+        ]);
+
+        // Log data pembayaran
+        Log::info('Pembayaran berhasil disimpan dengan status menunggu:', [
+            'kode_booking' => $kode_booking,
+            'bank' => $request->input('bank'),
+            'payment_code' => $request->input('payment_code'),
+            'bukti_pembayaran' => $filePath ?? 'Tidak ada',
+            'tanggal_keberangkatan' => $ticket->tanggal,
+        ]);
+
+        // Kirim data tiket ke halaman Tiket
+        return view('transaksi.Tiket', [
+            'ticket' => $ticket,
+            'nama_pemesan' => $nama_pemesan,
+            'email' => $email,
+            'no_handphone' => $no_handphone,
+            'alamat' => $alamat,
+            'nama_penumpang' => $nama_penumpang,
+            'selected_seats' => $selected_seats,
+            'total_pembayaran' => $total_pembayaran,
+            'barcode' => $barcode,
+            'status' => 'menunggu'
+        ]);
+    }
 
 
     public function showVirtualAccount()
@@ -429,7 +542,7 @@ class BusTicketController extends Controller
         return view('transaksi.Tiket', [
             'barcode' => $barcode, // Kirim barcode ke view
             'kode_booking' => $kode_booking, // Kirim kode booking ke view
-            'status' => 'pending' 
+            'status' => 'menunggu' 
             // Kirim data lainnya yang diperlukan
         ]);
     }
@@ -451,7 +564,7 @@ class BusTicketController extends Controller
 
         // Mengambil data tiket dan status
         $ticket = Ticket::find($booking->ticket_id);
-        $generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
+        $generator = new BarcodeGeneratorPNG();
         $barcode = base64_encode($generator->getBarcode($booking->kode_booking, $generator::TYPE_CODE_128));
 
         return view('transaksi.E-Ticket', [
@@ -465,7 +578,7 @@ class BusTicketController extends Controller
             'total_pembayaran' => $booking->total_pembayaran,
             'barcode' => $barcode,
             'kode_booking' => $booking->kode_booking,
-            'status' => $booking->status // Kirim status pembayaran
+            'status' => $booking->status
         ]);
     }
 

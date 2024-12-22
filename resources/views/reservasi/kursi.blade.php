@@ -1,16 +1,24 @@
 @php
-    // Ambil kursi yang terkunci dan terisi dari database
-    $lockedSeats = \App\Models\LockedSeat::where('ticket_id', session('kode_tiket'))
-        ->where('expired_at', '>', now())
+    // Pastikan variabel ticket tersedia dan gunakan ID tiket yang spesifik
+    $ticket = $ticket ?? null;
+    
+    // Ambil kursi terkunci dari LockedSeat model berdasarkan ticket_id spesifik
+    $lockedSeats = \App\Models\LockedSeat::where('ticket_id', $ticket?->id)
+        ->where('expires_at', '>', now())
         ->pluck('seat_number')
         ->toArray();
 
-    $bookedSeats = \App\Models\Booking::where('ticket_id', session('kode_tiket'))
-        ->pluck('kursi')
-        ->flatten()
+    // Ambil kursi yang sudah dipesan berdasarkan ticket_id spesifik
+    $bookedSeats = \App\Models\Booking::where('ticket_id', $ticket?->id)
+        ->get()
+        ->flatMap(function ($booking) {
+            return json_decode($booking->kursi, true);
+        })
         ->toArray();
-@endphp
 
+    // Gabungkan kursi terkunci dan kursi dipesan
+    $unavailableSeats = array_unique(array_merge($lockedSeats, $bookedSeats));
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +32,9 @@
 
     <x-header>
         <h1 class="text-2xl md:text-3xl font-bold text-center">Pilih Kursi Penumpang</h1>
-        <p class="text-center text-sm md:text-lg mt-2">Silahkan Pilih {{ session('jumlah_penumpang') }} Kursi Penumpang Senyaman-nya Anda</p>
+        <p class="text-center text-sm md:text-lg mt-2">
+            Silahkan Pilih {{ session('jumlah_penumpang') }} Kursi Penumpang Senyaman-nya Anda
+        </p>
     </x-header>
 
     <!-- Main Content -->
@@ -42,30 +52,30 @@
                     <!-- Seat Layout -->
                     <div class="space-y-4">
                     <!-- Row 1 to 6 -->
-                    @foreach (range(1, 24, 4) as $seatNumber)
+                    @foreach (range(1, 24, 4) as $rowStart)
                         <div class="flex justify-between">
                             <div class="flex space-x-2">
                                 @include('partials.seat', [
-                                    'seatNumber' => $seatNumber,
-                                    'isLocked' => in_array($seatNumber, $lockedSeats),
-                                    'isBooked' => in_array($seatNumber, $bookedSeats)
+                                    'seatNumber' => $rowStart,
+                                    'isLocked' => in_array($rowStart, $unavailableSeats),
+                                    'isBooked' => in_array($rowStart, $unavailableSeats)
                                 ])
                                 @include('partials.seat', [
-                                    'seatNumber' => $seatNumber + 1,
-                                    'isLocked' => in_array($seatNumber + 1, $lockedSeats),
-                                    'isBooked' => in_array($seatNumber + 1, $bookedSeats)
+                                    'seatNumber' => $rowStart + 1,
+                                    'isLocked' => in_array($rowStart + 1, $unavailableSeats),
+                                    'isBooked' => in_array($rowStart + 1, $unavailableSeats)
                                 ])
                             </div>
                             <div class="flex space-x-2">
                                 @include('partials.seat', [
-                                    'seatNumber' => $seatNumber + 2,
-                                    'isLocked' => in_array($seatNumber + 2, $lockedSeats),
-                                    'isBooked' => in_array($seatNumber + 2, $bookedSeats)
+                                    'seatNumber' => $rowStart + 2,
+                                    'isLocked' => in_array($rowStart + 2, $unavailableSeats),
+                                    'isBooked' => in_array($rowStart + 2, $unavailableSeats)
                                 ])
                                 @include('partials.seat', [
-                                    'seatNumber' => $seatNumber + 3,
-                                    'isLocked' => in_array($seatNumber + 3, $lockedSeats),
-                                    'isBooked' => in_array($seatNumber + 3, $bookedSeats)
+                                    'seatNumber' => $rowStart + 3,
+                                    'isLocked' => in_array($rowStart + 3, $unavailableSeats),
+                                    'isBooked' => in_array($rowStart + 3, $unavailableSeats)
                                 ])
                             </div>
                         </div>
@@ -75,13 +85,13 @@
                     <div class="flex justify-end space-x-2">
                         @include('partials.seat', [
                             'seatNumber' => 25,
-                            'isLocked' => in_array(25, $lockedSeats),
-                            'isBooked' => in_array(25, $bookedSeats)
+                            'isLocked' => in_array(25, $unavailableSeats),
+                            'isBooked' => in_array(25, $unavailableSeats)
                         ])
                         @include('partials.seat', [
                             'seatNumber' => 26,
-                            'isLocked' => in_array(26, $lockedSeats),
-                            'isBooked' => in_array(26, $bookedSeats)
+                            'isLocked' => in_array(26, $unavailableSeats),
+                            'isBooked' => in_array(26, $unavailableSeats)
                         ])
                     </div>
 
@@ -90,8 +100,8 @@
                         @foreach (range(27, 31) as $seatNumber)
                             @include('partials.seat', [
                                 'seatNumber' => $seatNumber,
-                                'isLocked' => in_array($seatNumber, $lockedSeats),
-                                'isBooked' => in_array($seatNumber, $bookedSeats)
+                                'isLocked' => in_array($seatNumber, $unavailableSeats),
+                                'isBooked' => in_array($seatNumber, $unavailableSeats)
                             ])
                         @endforeach
                     </div>
@@ -125,7 +135,7 @@
                 <div class="text-center">
                     <button type="submit"
                             form="seatForm"
-                            class="w-full md:w-auto bg-red-500 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-lg font-semibold transition-all duration-300 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="w-full md:w-auto bg-red-500 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-lg font-semibold transition-all duration-300 hover:bg-red-600 disabled:cursor-not-allowed"
                             id="submitButton"
                             disabled>
                         Konfirmasi Pilihan
@@ -154,84 +164,117 @@
             const selectedSeatsList = document.getElementById('selectedSeatsList');
             const submitButton = document.getElementById('submitButton');
             const selectedSeatsInput = document.getElementById('selectedSeatsInput');
-            let selectedSeats = [];
-    
-            // Reset kursi yang sebelumnya dipilih saat halaman dimuat
-            function resetSelectedSeats() {
-                seatCheckboxes.forEach(checkbox => {
-                    // Hapus status terpilih
-                    checkbox.checked = false;
-    
-                    // Update UI label
-                    const label = document.querySelector(`label[for="${checkbox.id}"]`);
-                    if (label) {
-                        label.classList.remove('bg-green-500', 'text-white'); // Hapus highlight
-                        label.classList.add('hover:bg-green-100'); // Tambahkan efek hover
-                    }
-                });
-    
-                // Kosongkan daftar kursi di UI
-                if (selectedSeatsList) selectedSeatsList.innerHTML = '';
-    
-                // Kosongkan hidden input
-                if (selectedSeatsInput) selectedSeatsInput.value = '[]';
-    
-                // Disable tombol konfirmasi
-                if (submitButton) submitButton.disabled = true;
-            }
-    
-            // Update tampilan kursi berdasarkan pemilihan pengguna
+            const seatForm = document.getElementById('seatForm');
+            
+            // Ambil kursi yang sebelumnya dipilih dari server
+            const preselectedSeats = JSON.parse('{!! json_encode($selectedSeats ?? []) !!}');
+            const unavailableSeats = JSON.parse('{!! json_encode($unavailableSeats ?? []) !!}');
+            let selectedSeats = [...preselectedSeats];
+
+            // Flash message handling
+            @if(session('error'))
+                alert('{{ session('error') }}');
+            @endif
+
             function updateSelectedSeats() {
-                selectedSeatsList.innerHTML = ''; // Reset daftar kursi di UI
-                selectedSeats = []; // Reset array kursi
-    
+                // Reset daftar kursi yang dipilih
+                selectedSeatsList.innerHTML = '';
+                selectedSeats = [];
+
                 seatCheckboxes.forEach(checkbox => {
-                    const label = document.querySelector(`label[for="${checkbox.id}"]`);
+                    const label = document.querySelector(`label[for="seat-${checkbox.value}"]`);
+
                     if (checkbox.checked) {
                         selectedSeats.push(checkbox.value);
-    
-                        // Tambahkan highlight ke kursi yang dipilih
-                        if (label) {
-                            label.classList.add('bg-green-500', 'text-white');
-                            label.classList.remove('hover:bg-green-100');
-                        }
-    
-                        // Tambahkan kursi ke daftar UI
+                        
+                        // Tambahkan kursi ke daftar yang dipilih
                         const li = document.createElement('li');
                         li.textContent = `Kursi ${checkbox.value}`;
                         selectedSeatsList.appendChild(li);
+
+                        // Ubah style label
+                        label.classList.add('bg-green-500', 'text-white');
+                        label.classList.remove('hover:bg-green-100');
                     } else {
-                        // Hapus highlight jika kursi tidak dipilih
-                        if (label) {
-                            label.classList.remove('bg-green-500', 'text-white');
-                            label.classList.add('hover:bg-green-100');
-                        }
+                        // Kembalikan style label
+                        label.classList.remove('bg-green-500', 'text-white');
+                        label.classList.add('hover:bg-green-100');
                     }
                 });
-    
-                // Simpan kursi yang dipilih di input hidden
+
+                // Update input tersembunyi dengan daftar kursi
                 selectedSeatsInput.value = JSON.stringify(selectedSeats);
-    
-                // Aktifkan tombol jika jumlah kursi sesuai
+                
+                // Aktifkan/non-aktifkan tombol submit
                 submitButton.disabled = selectedSeats.length !== maxSeats;
             }
-    
-            // Event listener untuk checkbox kursi
+
+            // Tampilkan kursi yang sebelumnya dipilih
+            preselectedSeats.forEach(seat => {
+                const checkbox = document.querySelector(`#seat-${seat}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+            updateSelectedSeats();
+
+            // Event Listener untuk pemilihan kursi
             seatCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function () {
-                    const checkedSeats = document.querySelectorAll('.seat-checkbox:checked').length;
-    
+                    // Cek apakah kursi sudah dipesan/dikunci
+                    if (unavailableSeats.includes(parseInt(this.value))) {
+                        this.checked = false;
+                        alert(`Kursi ${this.value} sudah tidak tersedia.`);
+                        return;
+                    }
+
+                    const checkedSeats = document.querySelectorAll('.seat-checkbox:checked:not(:disabled)').length;
+
+                    // Validasi jumlah kursi
                     if (checkedSeats > maxSeats) {
-                        this.checked = false; // Batalkan pemilihan jika melebihi batas
+                        this.checked = false;
                         alert(`Anda hanya dapat memilih ${maxSeats} kursi.`);
                     } else {
-                        updateSelectedSeats(); // Update UI
+                        updateSelectedSeats();
                     }
                 });
             });
-    
-            // Reset kursi saat halaman dimuat
-            resetSelectedSeats();
+
+            // Konfirmasi sebelum submit
+            seatForm.addEventListener('submit', function (e) {
+                // Validasi ulang sebelum submit
+                if (selectedSeats.length !== maxSeats) {
+                    e.preventDefault();
+                    alert(`Silakan pilih ${maxSeats} kursi.`);
+                    return;
+                }
+
+                // Konfirmasi pemilihan kursi
+                const confirmSelection = confirm(`Apakah Anda Yakin Memilih Kursi Nomor: ${selectedSeats.join(', ')}\nLanjutkan?`);
+                
+                if (!confirmSelection) {
+                    e.preventDefault();
+                } else {
+                    // Nonaktifkan tombol submit untuk mencegah multi-submit
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = 'Memproses...';
+                }
+            });
+
+            // Tambahkan event listener untuk tombol sebelumnya
+            const sebelumnyaButton = document.getElementById('sebelumnya-button');
+            if (sebelumnyaButton) {
+                sebelumnyaButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Konfirmasi kembali ke halaman sebelumnya
+                    const confirmBack = confirm('Anda akan kembali ke halaman sebelumnya. Pilihan kursi Anda akan dibatalkan. Lanjutkan?');
+                    
+                    if (confirmBack) {
+                        window.location.href = '{{ route('tickets.biodata', ['kode' => session('kode_tiket')]) }}';
+                    }
+                });
+            }
         });
     </script>   
 </body>

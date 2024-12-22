@@ -16,4 +16,3 @@ class ReleaseDailyLockedSeats extends Command
         $this->info('All expired seats have been released.');
     }
 }
-
