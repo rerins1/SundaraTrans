@@ -16,8 +16,8 @@
     <x-navbar></x-navbar>
 
     {{-- Form Tiket --}}
-    <div class="absolute inset-0 flex justify-center items-center z-40">
-        <div class="bg-white bg-opacity-70 backdrop-blur-md rounded-lg p-8 shadow-lg w-full max-w-lg">
+    <div class="absolute inset-0 flex justify-center items-center z-40 p-4 sm:p-6">
+        <div class="bg-white bg-opacity-70 backdrop-blur-md rounded-lg p-6 shadow-lg w-full max-w-md sm:max-w-lg">
             <ul class="flex border-b-2 border-black mb-4" id="tabs">
                 <li class="flex-1 text-center">
                     <button id="tab-booking" class="block w-full font-bold p-4 border-b-2 border-blue-500">

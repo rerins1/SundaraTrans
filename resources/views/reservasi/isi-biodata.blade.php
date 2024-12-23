@@ -106,12 +106,12 @@
                 </div>
 
                 <!-- Tombol Navigasi -->
-                <div class="md:flex md:justify-between mt-6 flex-col md:flex-row space-y-4 md:space-y-0">
-                    <a href="javascript:void(0);" id="sebelumnya-button" class="bg-blue-500 text-white px-4 py-2 rounded-lg w-full md:w-auto text-center">
+                <div class="flex flex-wrap md:justify-between justify-center gap-4 mt-6">
+                    <a href="javascript:void(0);" id="sebelumnya-button" class="bg-blue-500 text-white px-4 py-2 rounded-lg w-40 text-center">
                         SEBELUMNYA
                     </a>
-                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg w-full md:w-auto">
-                        SELANJUTNYA 
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg w-40">
+                        SELANJUTNYA
                     </button>
                 </div>
             </form>
@@ -214,4 +214,3 @@
     </script>
 </body>
 </html>
-```

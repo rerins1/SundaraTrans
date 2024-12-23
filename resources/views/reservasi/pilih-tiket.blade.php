@@ -54,7 +54,7 @@
                                     <div class="font-medium">{{ $ticket->tujuan }}</div>
                                 </div>
                                 <div class="flex justify-between items-center mt-2">
-                                    <span class="hidden md:block col-span-2 text-center">
+                                    <span class="text-sm text-gray-700">
                                         @if($ticket->sisa_kursi > 0)
                                             Tersedia {{ $ticket->sisa_kursi }} kursi
                                         @else

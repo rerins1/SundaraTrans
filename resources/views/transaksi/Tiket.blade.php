@@ -15,18 +15,18 @@
     <x-navbar class="fixed top-0 left-0 w-full z-50"></x-navbar>
 
     <!-- Kontainer Utama -->
-    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4 pt-15">
-        <div id="ticket-details" class="bg-white rounded-lg shadow-lg w-full max-w-4xl p-6">
+    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 pt-20 sm:px-2 md:px-4 lg:px-6 xl:px-8">
+        <div id="ticket-details" class="bg-white rounded-lg shadow-lg w-full max-w-4xl p-6 sm:p-4 md:p-6 lg:p-8">
             <!-- Header -->
-            <div class="flex justify-between items-center border-b pb-4">
-                <h1 class="text-2xl font-bold text-orange-600">Sundara Trans | E-Ticket</h1>
-                <div class="text-right">
+            <div class="flex flex-col sm:flex-row justify-between items-center border-b pb-4">
+                <h1 class="text-2xl font-bold text-orange-600 text-center sm:text-left">Sundara Trans | E-Ticket</h1>
+                <div class="text-right mt-2 sm:mt-0">
                     <p class="text-sm">Diterbitkan oleh: Sundara Trans</p>
                 </div>
             </div>
 
             <!-- Booking & Passenger Information -->
-            <div class="grid grid-cols-2 gap-6 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
                 <div>
                     <h2 class="text-lg font-semibold text-gray-700">Booking Information</h2>
                     <div class="mt-2">
@@ -40,14 +40,14 @@
                 <!-- Barcode -->
                 <div class="flex flex-col items-center justify-center border border-gray-300 rounded-lg p-4 bg-gray-50">
                     <img src="data:image/png;base64,{{ $barcode }}" alt="barcode" class="max-h-24 w-auto" />
-                    <p class="text-sm mt-2 text-gray-700">Kode Booking: <span class="font-bold">{{ session('success') }}</span></p>
+                    <p class="text-sm mt-2 text-gray-700 text-center">Kode Booking: <span class="font-bold">{{ session('success') }}</span></p>
                 </div>
             </div>
 
             <!-- Travel Data -->
             <div class="mt-6">
                 <h2 class="text-lg font-semibold text-gray-700">Data Perjalanan</h2>
-                <div class="grid grid-cols-3 gap-4 mt-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
                     <div>
                         <p><strong>Bus:</strong> Sundara Trans</p>
                         <p><strong>Kelas:</strong> {{ $ticket->kelas }}</p>
@@ -82,7 +82,7 @@
             <!-- Passenger Information -->
             <div class="mt-6">
                 <h2 class="text-lg font-semibold text-gray-700">Informasi Penumpang</h2>
-                <div class="grid grid-cols-3 gap-4 mt-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
                     <div>
                         <p><strong>Nama Penumpang:</strong></p>
                         @if(is_array($nama_penumpang))
@@ -136,6 +136,8 @@
                 Kembali ke Home
             </a>
         </div>
+
+        <div class="h-16"></div>
     </div>
 
     <script>
@@ -158,5 +160,4 @@
         }
     </script>
 </body>
-
 </html>
