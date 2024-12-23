@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class AdminBookingController extends Controller
 {
@@ -61,9 +63,16 @@ class AdminBookingController extends Controller
     // Mengkonfirmasi pembayaran
     public function confirm($id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking = Booking::with('ticket')->findOrFail($id);
         $booking->update(['status' => 'lunas']);
 
-        return redirect()->route('admin.bookings.index')->with('success', 'Pembayaran berhasil dikonfirmasi.');
+        // Generate barcode
+        $generator = new BarcodeGeneratorPNG();
+        $barcode = base64_encode($generator->getBarcode($booking->kode_booking, $generator::TYPE_CODE_128));
+
+        // Kirim email E-Ticket ke user
+        Mail::to($booking->email)->send(new \App\Mail\ETicketMail($booking, $barcode));
+
+        return redirect()->route('admin.bookings.index')->with('success', 'Pembayaran berhasil dikonfirmasi dan E-Ticket telah dikirim.');
     }
 }

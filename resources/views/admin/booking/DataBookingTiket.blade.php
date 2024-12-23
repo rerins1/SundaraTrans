@@ -54,6 +54,7 @@
                             <th class="py-3 px-4">No</th>
                             <th class="py-3 px-4">Kode Booking</th>
                             <th class="py-3 px-4">Nama Pemesan</th>
+                            <th class="py-3 px-4">Email</th>
                             <th class="py-3 px-4">No Handphone</th>
                             <th class="py-3 px-4">Tanggal</th>
                             <th class="py-3 px-4">Dari</th>
@@ -71,6 +72,7 @@
                             <td class="py-3 px-4">{{ $loop->iteration + ($bookings->firstItem() - 1) }}</td>
                             <td class="py-3 px-4">{{ $booking->kode_booking }}</td>
                             <td class="py-3 px-4">{{ $booking->nama_pemesan }}</td>
+                            <td class="py-3 px-4">{{ $booking->email }}</td>
                             <td class="py-3 px-4">{{ $booking->no_handphone }}</td>
                             <td class="py-3 px-4">{{ $booking->ticket->tanggal ?? 'N/A' }}</td>
                             <td class="py-3 px-4">{{ $booking->ticket->dari ?? 'N/A' }}</td>
