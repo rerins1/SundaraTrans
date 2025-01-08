@@ -33,7 +33,7 @@
                         <a href="/admin/users" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                     <div class="bg-green-500 text-white p-4 rounded">
-                        <h3 class="text-xl font-bold mb-2">Data Sopir</h3>
+                        <h3 class="text-xl font-bold mb-2">Data Supir</h3>
                         <a href="/admin/drivers" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                     <div class="bg-yellow-500 text-white p-4 rounded">
@@ -41,7 +41,7 @@
                         <a href="/admin/tickets" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                     <div class="bg-red-500 text-white p-4 rounded">
-                        <h3 class="text-xl font-bold mb-2">Data Pesanan Tiket</h3>
+                        <h3 class="text-xl font-bold mb-2">Data Pesanan E-Tiket</h3>
                         <a href="/admin/bookings" class="text-white hover:underline">Lihat <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                 </div>

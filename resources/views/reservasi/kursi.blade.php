@@ -38,7 +38,7 @@
     </x-header>
 
     <!-- Main Content -->
-    <div class="container mx-auto mt-4 md:mt-10 p-3 md:p-6 bg-white rounded-lg shadow-lg mb-10">
+    <div class="container mx-auto mt-4 md:mt-10 p-3 md:p-6 bg-white rounded-lg shadow-lg mb-[85px]">
         <h2 class="text-xl md:text-2xl font-bold text-center mb-3 md:mb-6">Pilih Kursi Anda</h2>
 
         <!-- Grid Container -->

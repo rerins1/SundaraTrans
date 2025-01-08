@@ -14,7 +14,7 @@
         <p class="text-center text-lg mt-2">Tetap terhubung dengan kami, dimana pun anda berada</p>
     </x-header>
     
-    <div class="container mx-auto pb-24">
+    <div class="container mx-auto pb-28 pt-4">
         <div class="flex flex-col lg:flex-row justify-between items-start pt-10">
             <div class="w-full lg:w-2/3">
                 <h3 class="text-xl font-bold mb-4 pt-8 text-center">SESUAIKAN JADWAL</h3>
@@ -35,7 +35,7 @@
                     <ul class="space-y-5">
                         @forelse ($tickets as $ticket)
                         <li class="grid grid-cols-12 md:gap-2 items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-200" 
-                            onclick="window.location.href='{{ route('tickets.biodata', $ticket->kode) }}'">
+                            onclick="handleTicketSelection(event, '{{ route('tickets.biodata', $ticket->kode) }}', {{ Auth::check() ? 'true' : 'false' }})">
                             {{-- Tampilan Mobile --}}
                             <div class="col-span-12 md:hidden grid grid-cols-1 gap-2">
                                 <div class="flex justify-between items-center">
@@ -150,6 +150,42 @@
     <x-footer></x-footer>
 
     <script src="{{ asset('js/script.js') }}"></script>
+    <script>
+        // Add this function at the beginning of your script.js
+        function handleTicketSelection(event, ticketUrl, isAuthenticated) {
+            event.preventDefault();
+            
+            if (!isAuthenticated) {
+                // Show login modal
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) {
+                    loginModal.classList.remove('hidden');
+                    
+                    // Store the ticket URL in session storage
+                    sessionStorage.setItem('intendedTicketUrl', ticketUrl);
+                    
+                    // Add event listener for successful login
+                    document.querySelector('form[action*="login"]').addEventListener('submit', function(e) {
+                        // The form will handle the redirect after successful login
+                        sessionStorage.setItem('redirectAfterLogin', ticketUrl);
+                    });
+                }
+            } else {
+                // If user is authenticated, proceed to ticket selection
+                window.location.href = ticketUrl;
+            }
+        }
+
+        // Add this at the end of your DOMContentLoaded event
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if there's a redirect URL in session storage after login
+            const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+            if (redirectUrl) {
+                sessionStorage.removeItem('redirectAfterLogin');
+                window.location.href = redirectUrl;
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -57,6 +57,11 @@ class AuthController extends Controller
             // Perbaikan logika redirect berdasarkan role
             if (Auth::user()->role === 'admin') {
                 return redirect()->route('dashboard');
+            } else {
+                // If there's an intended URL after login, redirect there
+                if ($request->session()->has('url.intended')) {
+                    return redirect()->intended();
+                }
             }
             
             return redirect()->intended(route('home'));
