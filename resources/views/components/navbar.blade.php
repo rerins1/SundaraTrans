@@ -1,5 +1,40 @@
 {{-- Navbar --}}
 <nav class="sticky top-0 z-50 left-0 w-full bg-white shadow-md">
+    <!-- Alert Container - Pindah ke tengah atas -->
+    @if(session('success'))
+    <div id="success-alert" class="fixed left-1/2 transform -translate-x-1/2 top-4 z-50 flex items-center p-4 mb-4 text-green-800 border-t-4 border-green-300 bg-green-50 dark:text-green-400 dark:bg-gray-800 dark:border-green-800 min-w-[320px] max-w-[90%] shadow-lg" role="alert">
+        <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+        </svg>
+        <div class="ms-3 text-sm font-medium">
+            {{ session('success') }}
+        </div>
+        <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg focus:ring-2 focus:ring-green-400 p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" onclick="closeAlert('success-alert')">
+            <span class="sr-only">Close</span>
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+            </svg>
+        </button>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div id="error-alert" class="fixed left-1/2 transform -translate-x-1/2 top-4 z-50 flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800 min-w-[320px] max-w-[90%] shadow-lg" role="alert">
+        <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+        </svg>
+        <div class="ms-3 text-sm font-medium">
+            {{ session('error') }}
+        </div>
+        <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700" onclick="closeAlert('error-alert')">
+            <span class="sr-only">Close</span>
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+            </svg>
+        </button>
+    </div>
+    @endif
+
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
             <span class="self-center text-2xl font-bold whitespace-nowrap dark:text-white">Sundara Trans</span>
@@ -224,14 +259,42 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <!-- Script section -->
     <script>
-        // Check if there's an error message and show modal
+        // Sembunyikan otomatis peringatan setelah 5 detik
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const successAlert = document.getElementById('success-alert');
+                const errorAlert = document.getElementById('error-alert');
+                
+                if (successAlert) {
+                    successAlert.style.opacity = '0';
+                    successAlert.style.transform = 'translate(-50%, -20px)';
+                    setTimeout(() => successAlert.style.display = 'none', 300);
+                }
+                if (errorAlert) {
+                    errorAlert.style.opacity = '0';
+                    errorAlert.style.transform = 'translate(-50%, -20px)';
+                    setTimeout(() => errorAlert.style.display = 'none', 300);
+                }
+            }, 5000);
+        });
+
+        // Berfungsi untuk menutup peringatan secara manual
+        function closeAlert(alertId) {
+            const alert = document.getElementById(alertId);
+            alert.style.opacity = '0';
+            alert.style.transform = 'translate(-50%, -20px)';
+            setTimeout(() => alert.style.display = 'none', 300);
+        }
+
+
+        // Periksa apakah ada pesan kesalahan dan tampilkan modal
         document.addEventListener('DOMContentLoaded', function() {
             @if(session('Gagal'))
                 openLoginModal();
             @endif
         });
 
-        // Close modal when clicking outside
+        // Tutup modal saat mengklik di luar
         document.addEventListener('click', function (event) {
             if (event.target.id === 'loginModal' || event.target.id === 'registerModal') {
                 document.getElementById('loginModal').classList.add('hidden');
@@ -244,12 +307,12 @@
             document.getElementById('loginModal').classList.add('hidden');
         }
 
-        // Prevent modal from closing when clicking inside the form
+       // Mencegah modal ditutup saat mengklik di dalam formulir
         document.querySelector('#loginModal .bg-white').addEventListener('click', function(e) {
             e.stopPropagation();
         });
 
-        // Close modal only when clicking outside
+        // Tutup modal hanya ketika mengklik di luar
         window.onclick = function(event) {
             const loginModal = document.getElementById('loginModal');
             const registerModal = document.getElementById('registerModal');
@@ -267,7 +330,7 @@
 
             passwordInput.type = isPassword ? 'text' : 'password';
 
-            // Toggle eye icon
+            // Toggle icon mata
             eyeIcon.setAttribute(
                 'd',
                 isPassword
@@ -283,7 +346,7 @@
 
             passwordInput.type = isPassword ? 'text' : 'password';
 
-            // Toggle eye icon
+            // Toggle icon mata
             eyeIcon.setAttribute(
                 'd',
                 isPassword
@@ -292,5 +355,10 @@
             );
         }
     </script>
+    <style>
+        #success-alert, #error-alert {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+    </style>
 
 </nav>

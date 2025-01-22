@@ -21,6 +21,10 @@ Route::prefix('booking')->group(function () {
     // Step 1: Search Tickets
     Route::post('/search', [BusTicketController::class, 'search'])
         ->name('search.bus.tickets');
+    Route::get('/search', function () {
+        return redirect()->route('home')->with('error', 'Harap gunakan form pencarian untuk mengakses halaman ini.');
+    });
+        
 
     // Step 2: Fill Biodata
     Route::get('/biodata/{kode?}', [BusTicketController::class, 'showBiodata'])
@@ -176,14 +180,14 @@ Route::get('/bus-code', function () {
     return view('tracking.bus-code');
 });
 
-Route::get('/live-tracking', function () {
-    return view('tracking.live-tracking');
-});
-
-Route::get('/Live-Tracking/SDT-001', function () {
-    return view('tracking.live-tracking');
-});
 
 Route::get('/Live-Tracking/SDT-001', function () {
     return view('tracking.SDT001');
+});
+
+Route::get('/Live-Tracking', function () {
+    return view('tracking.Live-Tracking');
+});
+Route::get('/Maps', function () {
+    return view('tracking.Maps');
 });

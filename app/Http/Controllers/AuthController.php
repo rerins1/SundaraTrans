@@ -18,26 +18,35 @@ class AuthController extends Controller
         return view('components.navbar');
     }
 
-    function submitRegistrasi(Request $request)
+    public function submitRegistrasi(Request $request)
     {
-        // Validasi input
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'phone' => 'required|string'
-        ]);
+        try {
+            // Validasi input
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8|confirmed',
+                'phone' => 'required|string'
+            ]);
 
-        // Buat user baru
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-            'phone' => $validated['phone'],
-            'role' => 'user' // Pastikan role default adalah user
-        ]);
-    
-        return redirect()->route('home');
+            // Buat user baru
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => bcrypt($validated['password']),
+                'phone' => $validated['phone'],
+                'role' => 'user'
+            ]);
+
+            // Jika berhasil sampai sini, berarti registrasi sukses
+            return redirect()->back()->with('success', 'Registrasi berhasil! Silakan login.');
+
+        } catch (\Exception $e) {
+            // Jika terjadi error, tangkap dan kembalikan pesan error
+            return redirect()->back()
+                ->with('error', 'Registrasi gagal! Silakan coba lagi.')
+                ->withInput();
+        }
     }
 
     function showLogin() {
