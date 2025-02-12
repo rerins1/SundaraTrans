@@ -26,6 +26,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @vite('resources/css/app.css')
     <title>Pilih Kursi - Sundara Trans</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
     <x-navbar></x-navbar>
@@ -38,7 +39,7 @@
     </x-header>
 
     <!-- Main Content -->
-    <div class="container mx-auto mt-4 md:mt-10 p-3 md:p-6 bg-white rounded-lg shadow-lg mb-[85px]">
+    <div class="container mx-auto mt-4 md:mt-10 p-3 md:p-6 bg-white rounded-lg shadow-lg mb-10">
         <h2 class="text-xl md:text-2xl font-bold text-center mb-3 md:mb-6">Pilih Kursi Anda</h2>
 
         <!-- Grid Container -->

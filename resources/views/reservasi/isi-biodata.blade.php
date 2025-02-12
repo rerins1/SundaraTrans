@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite('resources/css/app.css')
     <title>Biodata Form - Sundara Trans</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
     <x-navbar></x-navbar>
@@ -68,7 +69,7 @@
                     </div>
 
                     <!-- Informasi Keberangkatan -->
-                    <div class="bg-white p-4 rounded shadow-lg w-full md:w-[450px]">
+                    <div class="bg-white p-4 rounded shadow-lg w-full max-w-md mx-auto">
                         <h3 class="text-black font-bold text-lg mb-4">Tujuan Keberangkatan</h3>
                         <div class="space-y-3">
                             <div class="flex justify-between border-b">
@@ -103,6 +104,8 @@
                         <!-- Hidden input untuk menyimpan jumlah penumpang -->
                         <input type="hidden" name="jumlah_penumpang" id="jumlahPenumpang" value="{{ $jumlah_penumpang }}">
                     </div>
+
+
                 </div>
 
                 <!-- Tombol Navigasi -->

@@ -7,6 +7,7 @@
     @vite('resources/css/app.css')
     <title>Pembayaran Tiket</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         html, body {
             height: 100vh;

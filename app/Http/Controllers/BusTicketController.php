@@ -464,9 +464,6 @@ class BusTicketController extends Controller
         // Generate kode booking unik
         $kode_booking = 'SDT' . strtoupper(uniqid());
 
-        // Simpan kode booking ke session
-        session(['success' => $kode_booking]);
-
         // Proses upload bukti pembayaran
         if ($request->hasFile('bukti_pembayaran')) {
             $file = $request->file('bukti_pembayaran');
@@ -493,6 +490,8 @@ class BusTicketController extends Controller
             'bukti_pembayaran' => $filePath ?? null,
         ]);
 
+        session(['success' => $kode_booking]);
+
         // Log data pembayaran
         Log::info('Pembayaran berhasil disimpan dengan status menunggu:', [
             'kode_booking' => $kode_booking,
@@ -513,11 +512,9 @@ class BusTicketController extends Controller
             'selected_seats' => $selected_seats,
             'total_pembayaran' => $total_pembayaran,
             'barcode' => $barcode,
-            'kode_booking' => $kode_booking, // Kirim kode booking ke view
             'status' => 'menunggu'
         ]);
     }
-
 
 
     public function showVirtualAccount()

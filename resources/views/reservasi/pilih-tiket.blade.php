@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @vite('resources/css/app.css')
     <title>Pilih Tiket - Sundara Trans</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 
@@ -88,7 +89,7 @@
             </div>
             
             <!-- Kotak Ubah Keberangkatan -->
-            <div class="w-full lg:w-1/3 mt-6 lg:mt-0 lg:ml-6">
+            <div class="w-full lg:w-1/3 mt-6 lg:mt-0 lg:ml-6 max-w-md mx-auto">
                 <form class="space-y-4 md:space-y-6 lg:space-y-8 px-4 sm:px-6 md:px-8 lg:px-10" id="form-booking" action="{{ route('search.bus.tickets') }}" method="POST">
                     @csrf
                     <h3 class="text-xl font-bold mb-4 pt-8 text-center lg:text-left">UBAH KEBERANGKATAN</h3>
@@ -143,7 +144,7 @@
                         </button>
                     </div>
                 </form>
-            </div>          
+            </div>
         </div>
     </div>
 
